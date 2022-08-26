@@ -1,22 +1,39 @@
 import { useCallback, useEffect, useState } from "react";
-import { Center, Image } from "@chakra-ui/react";
+import { Center, IconButton, Image } from "@chakra-ui/react";
 import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
-import type { ImageProps } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { Spacer, HStack, VStack, Box, Text } from "@chakra-ui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+} from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import { Spacer, HStack, VStack, Box, Text, Input } from "@chakra-ui/react";
 import { IconContext } from "react-icons";
 import { GoCalendar } from "react-icons/Go";
 import { BiChevronLeft, BiChevronRight } from "react-icons/Bi";
+import React from "react";
+import { Button, ButtonGroup } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
+import FocusLock from "react-focus-lock";
 
 function make_calendar(year: number, month: number) {
   // 年とか月とか計算します n年n月１日の情報を持ってくる
@@ -53,16 +70,25 @@ function make_calendar(year: number, month: number) {
   return month_days;
 }
 
-function planMaker() {
-  console.log(111);
-  return 0;
-}
-
-function makeMonth(nowYear: number, nowMonth: number) {
+function MakeMonth(nowYear: number, nowMonth: number) {
   const today = new Date();
 
   // カレンダー作る
   const month_days = make_calendar(nowYear, nowMonth);
+
+  const { onOpen, onClose, isOpen } = useDisclosure();
+
+  const [TytleInput, setTytleInput] = useState<string | null>(null);
+
+  const handleChangeDynamic = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setTytleInput(event.target.value);
+
+  function handleChangeInitInput() {
+    console.log("22");
+    setTytleInput("");
+  }
+
+  const isTytleInputError = TytleInput === "";
 
   // リスト状にして出す
   const listCalender = month_days.map((weekdays, index) => (
@@ -84,13 +110,55 @@ function makeMonth(nowYear: number, nowMonth: number) {
               w="150px"
               verticalAlign="top"
             >
-              <Box onClick={planMaker}>
-                <Box bg="green.300" px={1} h={1}></Box>
-                <Text color="green.300">{oneday}日</Text>
-                <Box bg="green">
-                  <Text color="white">予定</Text>
+              <Popover
+                isOpen={isOpen}
+                onOpen={onOpen}
+                onClose={onClose}
+                placement="right"
+                closeOnBlur={false}
+              >
+                <Box>
+                  <Box bg="green.300" px={1} h={1}></Box>
+                  <Text color="green.300">{oneday}日</Text>
+                  <PopoverTrigger>
+                    <Box bg="green" onClick={handleChangeInitInput}>
+                      <Text color="white">予定</Text>
+                    </Box>
+                  </PopoverTrigger>
                 </Box>
-              </Box>
+                <PopoverContent p={5}>
+                  <FocusLock returnFocus persistentFocus={false}>
+                    <PopoverArrow />
+                    <PopoverHeader fontWeight="semibold">
+                      予定の作成
+                    </PopoverHeader>
+                    <PopoverCloseButton />
+                    <VStack spacing={4}>
+                      <FormControl isInvalid={isTytleInputError}>
+                        <Input
+                          value={TytleInput ?? ""}
+                          placeholder="タイトルを入力"
+                          onChange={handleChangeDynamic}
+                        />
+                        {!isTytleInputError ? (
+                          <FormHelperText></FormHelperText>
+                        ) : (
+                          <FormErrorMessage>
+                            タイトルを入力して下さい。
+                          </FormErrorMessage>
+                        )}
+                      </FormControl>
+                      <Input size="md" type="date" />
+                      <HStack>
+                        <Input size="md" type="time" />
+                        <text>~</text>
+                        <Input size="md" type="time" />
+                      </HStack>
+                      <Input id="memo" placeholder="memo" />
+                    </VStack>
+                  </FocusLock>
+                </PopoverContent>
+              </Popover>
             </Td>
           );
         } else {
@@ -142,7 +210,7 @@ function App() {
     }
   }
 
-  const viewMonth = makeMonth(nowYear, nowMonth);
+  const viewMonth = MakeMonth(nowYear, nowMonth);
 
   return (
     <Center
@@ -154,6 +222,7 @@ function App() {
         textAlign: "center",
       }}
     >
+      <Box>{/*viewButton*/}</Box>
       <Box>
         <HStack>
           <IconContext.Provider value={{ color: "4db56a", size: "50px" }}>
@@ -174,35 +243,33 @@ function App() {
         <TableContainer>
           <Table variant="simple" size="lg">
             <Thead>
-              <Tr>
-                <Th border="1px solid black">
-                  <Text>日曜日</Text>
-                </Th>
+              <Th border="1px solid black" px={2}>
+                <Text>日曜日</Text>
+              </Th>
 
-                <Th border="1px solid black">
-                  <Text>月曜日</Text>
-                </Th>
+              <Th border="1px solid black" px={2}>
+                <Text>月曜日</Text>
+              </Th>
 
-                <Th border="1px solid black">
-                  <Text>火曜日</Text>
-                </Th>
+              <Th border="1px solid black" px={2}>
+                <Text>火曜日</Text>
+              </Th>
 
-                <Th border="1px solid black">
-                  <Text>水曜日</Text>
-                </Th>
+              <Th border="1px solid black" px={2}>
+                <Text>水曜日</Text>
+              </Th>
 
-                <Th border="1px solid black">
-                  <Text>木曜日</Text>
-                </Th>
+              <Th border="1px solid black" px={2}>
+                <Text>木曜日</Text>
+              </Th>
 
-                <Th border="1px solid black">
-                  <Text>金曜日</Text>
-                </Th>
+              <Th border="1px solid black" px={2}>
+                <Text>金曜日</Text>
+              </Th>
 
-                <Th border="1px solid black">
-                  <Text>土曜日</Text>
-                </Th>
-              </Tr>
+              <Th border="1px solid black" px={2}>
+                <Text>土曜日</Text>
+              </Th>
             </Thead>
 
             <Tbody>{viewMonth}</Tbody>
