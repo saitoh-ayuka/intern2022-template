@@ -32,8 +32,8 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { IconContext } from "react-icons";
-import { GoCalendar } from "react-icons/Go";
-import { BiChevronLeft, BiChevronRight } from "react-icons/Bi";
+import { GoCalendar } from "react-icons/go";
+import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import type React from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import FocusLock from "react-focus-lock";
