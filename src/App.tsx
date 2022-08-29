@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { Center, IconButton, Image } from "@chakra-ui/react";
+import { useState } from "react";
+import { Center } from "@chakra-ui/react";
 import {
   Table,
   Thead,
@@ -14,28 +14,31 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
   PopoverArrow,
   PopoverCloseButton,
-  PopoverAnchor,
 } from "@chakra-ui/react";
 import {
   FormControl,
-  FormLabel,
   FormErrorMessage,
   FormHelperText,
 } from "@chakra-ui/react";
-import { Spacer, HStack, VStack, Box, Text, Input } from "@chakra-ui/react";
+import {
+  Spacer,
+  HStack,
+  VStack,
+  Box,
+  Text,
+  Input,
+  Textarea,
+} from "@chakra-ui/react";
 import { IconContext } from "react-icons";
 import { GoCalendar } from "react-icons/Go";
 import { BiChevronLeft, BiChevronRight } from "react-icons/Bi";
-import React from "react";
-import { Button, ButtonGroup } from "@chakra-ui/react";
+import type React from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import FocusLock from "react-focus-lock";
 
-function make_calendar(year: number, month: number) {
+const make_calendar = (year: number, month: number) => {
   // 年とか月とか計算します n年n月１日の情報を持ってくる
   const monthFirst = new Date(year, month, 1);
 
@@ -68,27 +71,11 @@ function make_calendar(year: number, month: number) {
     month_days[i] = weekdays;
   }
   return month_days;
-}
+};
 
-function MakeMonth(nowYear: number, nowMonth: number) {
-  const today = new Date();
-
+const MakeMonth = (nowYear: number, nowMonth: number) => {
   // カレンダー作る
   const month_days = make_calendar(nowYear, nowMonth);
-
-  const { onOpen, onClose, isOpen } = useDisclosure();
-
-  const [TytleInput, setTytleInput] = useState<string | null>(null);
-
-  const handleChangeDynamic = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setTytleInput(event.target.value);
-
-  function handleChangeInitInput() {
-    console.log("22");
-    setTytleInput("");
-  }
-
-  const isTytleInputError = TytleInput === "";
 
   // リスト状にして出す
   const listCalender = month_days.map((weekdays, index) => (
@@ -96,85 +83,17 @@ function MakeMonth(nowYear: number, nowMonth: number) {
       {weekdays.map((oneday, index) => {
         if (oneday == null) {
           return <Td key={index} padding={0} border="1px solid black"></Td>;
-        } else if (
-          oneday == today.getDate() &&
-          today.getMonth() == nowMonth &&
-          today.getFullYear() == nowYear
-        ) {
-          return (
-            <Td
-              key={index}
-              padding={1}
-              border="1px solid black"
-              h="110px"
-              w="150px"
-              verticalAlign="top"
-            >
-              <Popover
-                isOpen={isOpen}
-                onOpen={onOpen}
-                onClose={onClose}
-                placement="right"
-                closeOnBlur={false}
-              >
-                <Box>
-                  <Box bg="green.300" px={1} h={1}></Box>
-                  <Text color="green.300">{oneday}日</Text>
-                  <PopoverTrigger>
-                    <Box bg="green" onClick={handleChangeInitInput}>
-                      <Text color="white">予定</Text>
-                    </Box>
-                  </PopoverTrigger>
-                </Box>
-                <PopoverContent p={5}>
-                  <FocusLock returnFocus persistentFocus={false}>
-                    <PopoverArrow />
-                    <PopoverHeader fontWeight="semibold">
-                      予定の作成
-                    </PopoverHeader>
-                    <PopoverCloseButton />
-                    <VStack spacing={4}>
-                      <FormControl isInvalid={isTytleInputError}>
-                        <Input
-                          value={TytleInput ?? ""}
-                          placeholder="タイトルを入力"
-                          onChange={handleChangeDynamic}
-                        />
-                        {!isTytleInputError ? (
-                          <FormHelperText></FormHelperText>
-                        ) : (
-                          <FormErrorMessage>
-                            タイトルを入力して下さい。
-                          </FormErrorMessage>
-                        )}
-                      </FormControl>
-                      <Input size="md" type="date" />
-                      <HStack>
-                        <Input size="md" type="time" />
-                        <text>~</text>
-                        <Input size="md" type="time" />
-                      </HStack>
-                      <Input id="memo" placeholder="memo" />
-                    </VStack>
-                  </FocusLock>
-                </PopoverContent>
-              </Popover>
-            </Td>
-          );
         } else {
           return (
             <Td
               key={index}
-              padding={1}
+              padding={0}
               border="1px solid black"
               h="110px"
               w="150px"
               verticalAlign="top"
             >
-              <Box flex="1">
-                <Text>{oneday}日</Text>
-                {/* <Box bg='green.200' flex='1'>予定</Box> */}
-              </Box>
+              {Oneday(nowYear, nowMonth, index, oneday)}
             </Td>
           );
         }
@@ -182,9 +101,118 @@ function MakeMonth(nowYear: number, nowMonth: number) {
     </Tr>
   ));
   return listCalender;
-}
+};
 
-function App() {
+const Oneday = (
+  nowYear: number,
+  nowMonth: number,
+  index: number,
+  oneday: number
+) => {
+  const today = new Date();
+
+  const { onOpen, onClose, isOpen } = useDisclosure();
+
+  const [TytleInput, setTytleInput] = useState<string | null>(null);
+  const [MemoInput, setMemoInput] = useState<string | null>(null);
+  const [IsInput, setIsInput] = useState(false);
+
+  const handleInputChangeDynamic = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.value.length <= 10) {
+      setTytleInput(event.target.value);
+      setIsInput(true);
+    }
+  };
+
+  const handleMemoChangeDynamic = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (event.target.value.length <= 255) {
+      setMemoInput(event.target.value);
+    }
+  };
+
+  function handleChangeInitInput() {
+    if (isOpen == false) {
+      setTytleInput("");
+      setIsInput(false);
+      onOpen();
+    }
+  }
+  const isTytleInputError = TytleInput === "";
+
+  return (
+    <Box h="100%" w="100%" onClick={handleChangeInitInput}>
+      {oneday == today.getDate() &&
+        today.getMonth() == nowMonth &&
+        today.getFullYear() == nowYear && (
+          <>
+            <Box bg="green.300" px={1} h={1}></Box>
+            <Text color="green.300">{oneday}日</Text>
+          </>
+        )}
+      {(oneday == today.getDate() &&
+        today.getMonth() == nowMonth &&
+        today.getFullYear() == nowYear) || (
+        <>
+          <Text>{oneday}日</Text>
+        </>
+      )}
+      <Popover
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="right"
+        closeOnBlur={IsInput}
+      >
+        <PopoverTrigger>
+          <Box>
+            <Box bg="green.300" color="white">
+              {isOpen && !IsInput && "新規作成..."}
+            </Box>
+          </Box>
+        </PopoverTrigger>
+        <PopoverContent p={5}>
+          <FocusLock returnFocus persistentFocus={false}>
+            <PopoverArrow />
+            <PopoverHeader fontWeight="semibold">予定の作成</PopoverHeader>
+            <PopoverCloseButton />
+            <VStack spacing={4}>
+              <FormControl isInvalid={isTytleInputError}>
+                <Input
+                  value={TytleInput ?? ""}
+                  placeholder="タイトルを入力"
+                  onChange={handleInputChangeDynamic}
+                />
+                {!isTytleInputError ? (
+                  <FormHelperText></FormHelperText>
+                ) : (
+                  <FormErrorMessage>
+                    タイトルを入力して下さい。（10文字以内）
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <Input size="md" type="date" />
+              <HStack>
+                <Input size="md" type="time" />
+                <text>~</text>
+                <Input size="md" type="time" />
+              </HStack>
+              <Textarea
+                id="memo"
+                placeholder="memo"
+                onChange={handleMemoChangeDynamic}
+              />
+            </VStack>
+          </FocusLock>
+        </PopoverContent>
+      </Popover>
+    </Box>
+  );
+};
+
+const App = () => {
   const today = new Date();
 
   const [nowMonth, setNowMonth] = useState<number>(today.getMonth());
@@ -222,7 +250,6 @@ function App() {
         textAlign: "center",
       }}
     >
-      <Box>{/*viewButton*/}</Box>
       <Box>
         <HStack>
           <IconContext.Provider value={{ color: "4db56a", size: "50px" }}>
@@ -278,6 +305,6 @@ function App() {
       </Box>
     </Center>
   );
-}
+};
 
 export default App;
