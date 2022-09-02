@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Center } from "@chakra-ui/react";
 import { Table, Thead, Tr, Th, TableContainer } from "@chakra-ui/react";
 import { Spacer, HStack, Box, Text } from "@chakra-ui/react";
@@ -7,7 +7,6 @@ import { GoCalendar } from "react-icons/go";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import type React from "react";
 import { MakeMonth } from "./MakeMonth";
-import { ThemeContext } from "@emotion/react";
 
 export type Schedule = {
   title: string;
@@ -43,22 +42,7 @@ const App: React.FC = () => {
     }
   };
 
-  const [scheduleList, setScheduleList] = useState<Schedule[]>([
-    {
-      title: "タイトル",
-      date: "2022-09-01",
-      beforeTime: "17:01",
-      afterTime: "17:09",
-      memo: "tsts",
-    },
-    {
-      title: "タイトル2",
-      date: "2022-09-01",
-      beforeTime: "17:01",
-      afterTime: "17:11",
-      memo: "tsts",
-    },
-  ]);
+  const [scheduleList, setScheduleList] = useState<Schedule[]>([]);
 
   const addSchedule = (newSchedule: Schedule) => {
     //既存のscheduleList + 追加したい予定
@@ -67,7 +51,43 @@ const App: React.FC = () => {
       tempScheduleList.push(newSchedule);
       return tempScheduleList;
 
-      // return [...prevList, newSchedule]
+      // return [...prevList, newSchedule];
+    });
+  };
+
+  const removeSchedule = (oldSchedule: Schedule) => {
+    //既存のscheduleList ー 追加したい予定
+    setScheduleList((prevList: Schedule[]) => {
+      const tempScheduleList = [...prevList];
+      const indexNumber = tempScheduleList.findIndex(
+        (item: Schedule) =>
+          item.title == oldSchedule.title &&
+          item.date == oldSchedule.date &&
+          item.beforeTime == oldSchedule.beforeTime &&
+          item.afterTime == oldSchedule.afterTime &&
+          item.memo == oldSchedule.memo
+      );
+      if (indexNumber != -1) tempScheduleList.splice(indexNumber, 1);
+
+      return tempScheduleList;
+    });
+  };
+
+  const rewriteSchedule = (oldSchedule: Schedule, newSchedule: Schedule) => {
+    setScheduleList((prevList: Schedule[]) => {
+      const tempScheduleList = [...prevList];
+      const indexNumber = tempScheduleList.findIndex(
+        (item: Schedule) =>
+          item.title == oldSchedule.title &&
+          item.date == oldSchedule.date &&
+          item.beforeTime == oldSchedule.beforeTime &&
+          item.afterTime == oldSchedule.afterTime &&
+          item.memo == oldSchedule.memo
+      );
+      if (indexNumber != -1)
+        tempScheduleList.splice(indexNumber, 1, newSchedule);
+
+      return tempScheduleList;
     });
   };
 
@@ -137,6 +157,8 @@ const App: React.FC = () => {
               nowYear={nowYear}
               scheduleList={scheduleList}
               addSchedule={addSchedule}
+              removeSchedule={removeSchedule}
+              rewriteSchedule={rewriteSchedule}
             />
           </Table>
         </TableContainer>

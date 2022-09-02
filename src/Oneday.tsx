@@ -20,17 +20,19 @@ import {
 } from "@chakra-ui/react";
 import FocusLock from "react-focus-lock";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ViewDays } from "./ViewDays";
 import { MdTitle } from "react-icons/md";
 import { BsChatText } from "react-icons/bs";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import { GoTrashcan } from "react-icons/go";
-
+import { BiEditAlt } from "react-icons/bi";
 import { IoMdTime } from "react-icons/io";
+import { RiSave3Line } from "react-icons/ri";
 
 import { IconContext } from "react-icons";
 import type { Schedule } from "./App";
+import type { Holidays } from "./MakeMonth";
 
 type Props = {
   nowYear: number;
@@ -39,6 +41,8 @@ type Props = {
 
   scheduleList: Schedule[];
   addSchedule: (Schedule: Schedule) => void;
+  removeSchedule: (Schedule: Schedule) => void;
+  rewriteSchedule: (oldSchedule: Schedule, newSchedule: Schedule) => void;
 };
 
 export const Oneday: React.FC<Props> = (props: Props) => {
@@ -54,19 +58,24 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     isOpen: isOpenDetailPopover,
   } = useDisclosure();
 
+  const {
+    onOpen: onOpenEditPopover,
+    onClose: onCloseEditPopover,
+    isOpen: isOpenEditPopover,
+  } = useDisclosure();
+
   const [TitleInput, setTytleInput] = useState<string>("");
   const [MemoInput, setMemoInput] = useState<string>("");
   const [DateInput, setDateInput] = useState<string>("");
   const [BeforeTimeInput, setBeforeTimeInput] = useState<string>("");
   const [AfterTimeInput, setAfterTimeInput] = useState<string>("");
-  const [IsTitleInputEmpty, setIsTitleInput] = useState(false);
+  const [planNumber, setPlanNumber] = useState<number>(0);
 
   const handleInputChangeDynamic = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event.target.value.length <= 10) {
       setTytleInput(event.target.value);
-      setIsTitleInput(true);
     }
   };
 
@@ -84,38 +93,49 @@ export const Oneday: React.FC<Props> = (props: Props) => {
 
   const handleMemoChangeDynamic = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => setMemoInput(event.target.value);
-
-  const handleChangeInitInput = () => {
-    if (isOpenTitleInputPopover == false) {
-      if (!(TitleInput === "") && !isOpenDetailPopover) {
-        setTytleInput("");
-        setDateInput("");
-        setBeforeTimeInput("");
-        setAfterTimeInput("");
-        // setMemoInput("");
-        setIsTitleInput(false);
-      }
-      if (!isOpenDetailPopover) onOpenTitleInputPopover();
+  ) => {
+    if (event.target.value.length <= 255) {
+      setMemoInput(event.target.value);
     }
   };
 
-  const handleChangeInitDetail = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleChangeInitInput = () => {
+    if (!isOpenTitleInputPopover) {
+      if (!(TitleInput === "") && !isOpenDetailPopover && !isOpenEditPopover) {
+        setTytleInput("");
+        setDateInput(() => {
+          const month = ("00" + (props.nowMonth + 1).toString()).slice(-2);
+          const date = ("00" + props.oneday.toString()).slice(-2);
+          return props.nowYear.toString() + "-" + month + "-" + date;
+        });
+        setBeforeTimeInput("");
+        setAfterTimeInput("");
+        setMemoInput("");
+      }
+      if (!isOpenDetailPopover && !isOpenEditPopover) onOpenTitleInputPopover();
+    }
+  };
+
+  const handleChangeInitDetail = (
+    event: React.MouseEvent<HTMLDivElement>,
+    index: number
+  ) => {
+    setPlanNumber(index);
     onOpenDetailPopover();
     event.stopPropagation();
   };
 
   const handleChangeDeletePlan = () => {
-    if (isOpenDetailPopover) {
-      setTytleInput("");
-      setDateInput("");
-      setBeforeTimeInput("");
-      setAfterTimeInput("");
-      // setMemoInput("");
-      setIsTitleInput(false);
-
-      onCloseDetailPopover();
-    }
+    props.removeSchedule({
+      title: props.scheduleList[planNumber].title,
+      date: props.scheduleList[planNumber].date,
+      beforeTime: props.scheduleList[planNumber].beforeTime,
+      afterTime: props.scheduleList[planNumber].afterTime,
+      memo: props.scheduleList[planNumber].memo,
+    });
+    if (planNumber > 0) setPlanNumber(planNumber - 1);
+    onCloseDetailPopover();
+    onCloseEditPopover();
   };
 
   const onCloseAndMakePlanPopover = () => {
@@ -126,7 +146,40 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       afterTime: AfterTimeInput,
       memo: MemoInput,
     });
-    // props.setScheduleList(props.allSchedule);
+    onCloseTitleInputPopover();
+  };
+
+  const onCloseAndEditPlanPopover = () => {
+    onOpenEditPopover();
+    onCloseDetailPopover();
+
+    setTytleInput(props.scheduleList[planNumber].title);
+    setDateInput(props.scheduleList[planNumber].date);
+    setBeforeTimeInput(props.scheduleList[planNumber].beforeTime);
+    setAfterTimeInput(props.scheduleList[planNumber].afterTime);
+    setMemoInput(props.scheduleList[planNumber].memo);
+  };
+
+  const onCloseAndEditEndPopover = () => {
+    props.rewriteSchedule(
+      {
+        title: props.scheduleList[planNumber].title,
+        date: props.scheduleList[planNumber].date,
+        beforeTime: props.scheduleList[planNumber].beforeTime,
+        afterTime: props.scheduleList[planNumber].afterTime,
+        memo: props.scheduleList[planNumber].memo,
+      },
+      {
+        title: TitleInput,
+        date: DateInput,
+        beforeTime: BeforeTimeInput,
+        afterTime: AfterTimeInput,
+        memo: MemoInput,
+      }
+    );
+
+    handleChangeInitInput();
+    onCloseEditPopover();
     onCloseTitleInputPopover();
   };
 
@@ -150,13 +203,16 @@ export const Oneday: React.FC<Props> = (props: Props) => {
             {/* 入力済みの予定を表示 */}
             {props.scheduleList.length >= 1 && (
               <>
-                <Box
-                  bg="green.400"
-                  color="white"
-                  onClick={handleChangeInitDetail}
-                >
-                  {props.scheduleList[0].title}
-                </Box>
+                {props.scheduleList.map((schedule, index) => (
+                  <Box
+                    key={index}
+                    bg="green.400"
+                    color="white"
+                    onClick={(event) => handleChangeInitDetail(event, index)}
+                  >
+                    {schedule.title}
+                  </Box>
+                ))}
               </>
             )}
           </Box>
@@ -168,6 +224,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
               <HStack>
                 <Text>予定の詳細</Text>
                 <Spacer />
+                {/* 予定編集ポップオーバー、起動 */}
+                <BiEditAlt onClick={onCloseAndEditPlanPopover} />
                 <GoTrashcan onClick={handleChangeDeletePlan} />
                 <PopoverCloseButton />
               </HStack>
@@ -179,22 +237,24 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                   <>
                     <HStack>
                       <MdTitle />
-                      <Text>{props.scheduleList[0].title}</Text>
+                      <Text>{props.scheduleList[planNumber].title}</Text>
                     </HStack>
                     <HStack>
                       <FaRegCalendarCheck />
-                      <Text>{props.scheduleList[0].date}</Text>
+                      <Text>{props.scheduleList[planNumber].date}</Text>
                     </HStack>
                     <HStack>
                       <IoMdTime />
-                      <Text>{props.scheduleList[0].beforeTime}</Text>
-                      <Text>{props.scheduleList[0].afterTime && <>~</>}</Text>
-                      <Text>{props.scheduleList[0].afterTime}</Text>
+                      <Text>{props.scheduleList[planNumber].beforeTime}</Text>
+                      <Text>
+                        {props.scheduleList[planNumber].afterTime && <>~</>}
+                      </Text>
+                      <Text>{props.scheduleList[planNumber].afterTime}</Text>
                     </HStack>
                     <HStack>
                       <BsChatText />
-                      <Text style={{ whiteSpace: "pre-line" }}>
-                        {props.scheduleList[0].memo}
+                      <Text width={"230px"} style={{ whiteSpace: "pre-wrap" }}>
+                        {props.scheduleList[planNumber].memo}
                       </Text>
                     </HStack>
                   </>
@@ -204,12 +264,88 @@ export const Oneday: React.FC<Props> = (props: Props) => {
           </FocusLock>
         </PopoverContent>
       </Popover>
+      {/* 予定編集ポップオーバー */}
+      <Popover
+        isOpen={isOpenEditPopover}
+        onClose={onCloseAndEditEndPopover}
+        placement="right"
+        closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
+      >
+        <PopoverTrigger>
+          <Box></Box>
+        </PopoverTrigger>
+        <PopoverContent p={5}>
+          <FocusLock returnFocus persistentFocus={false}>
+            <PopoverArrow />
+            <PopoverHeader fontWeight="semibold">
+              <HStack>
+                <Text>予定の編集</Text>
+                <Spacer />
+                <RiSave3Line onClick={onCloseAndEditEndPopover} />
+                <GoTrashcan onClick={handleChangeDeletePlan} />
+                <PopoverCloseButton />
+              </HStack>
+            </PopoverHeader>
+            <VStack spacing={4}>
+              <FormControl isInvalid={TitleInput === ""}>
+                <Input
+                  value={TitleInput}
+                  placeholder="タイトルを入力"
+                  onChange={handleInputChangeDynamic}
+                />
+                {!(TitleInput === "") ? (
+                  <FormHelperText></FormHelperText>
+                ) : (
+                  <FormErrorMessage>
+                    タイトルを入力して下さい。（10文字以内）
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl isInvalid={DateInput === ""}>
+                <Input
+                  size="md"
+                  type="date"
+                  value={DateInput}
+                  onChange={handleDateChangeDynamic}
+                />
+                {!(DateInput === "") ? (
+                  <FormHelperText></FormHelperText>
+                ) : (
+                  <FormErrorMessage>日付を指定して下さい。</FormErrorMessage>
+                )}
+              </FormControl>
+              <HStack>
+                <Input
+                  size="md"
+                  type="time"
+                  value={BeforeTimeInput}
+                  onChange={handleBeforeTimeChangeDynamic}
+                />
+                <Text>~</Text>
+                <Input
+                  size="md"
+                  type="time"
+                  value={AfterTimeInput}
+                  onChange={handleAfterTimeChangeDynamic}
+                />
+              </HStack>
+              <Textarea
+                id="memo"
+                placeholder="memo"
+                value={MemoInput}
+                onChange={handleMemoChangeDynamic}
+              />
+            </VStack>
+          </FocusLock>
+        </PopoverContent>
+      </Popover>
+
       {/* 予定作成ポップオーバー */}
       <Popover
         isOpen={isOpenTitleInputPopover}
         onClose={onCloseAndMakePlanPopover}
         placement="right"
-        closeOnBlur={!(TitleInput === "")}
+        closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
       >
         <PopoverTrigger>
           <Box>
@@ -272,7 +408,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                 id="memo"
                 placeholder="memo"
                 value={MemoInput}
-                // onChange={handleMemoChangeDynamic}
+                onChange={handleMemoChangeDynamic}
               />
             </VStack>
           </FocusLock>
