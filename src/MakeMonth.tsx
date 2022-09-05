@@ -1,20 +1,16 @@
 import { Tr, Td, Tbody } from "@chakra-ui/react";
 import { Oneday } from "./Oneday";
-import type { Schedule } from "./App";
-import { useEffect, useState } from "react";
+import type { Holidays, Schedule } from "./App";
 
 type Props = {
   nowYear: number;
   nowMonth: number;
   scheduleList: Schedule[];
+  holidayList: Holidays[];
+
   addSchedule: (Schedule: Schedule) => void;
   removeSchedule: (Schedule: Schedule) => void;
   rewriteSchedule: (oldSchedule: Schedule, newSchedule: Schedule) => void;
-};
-
-export type Holidays = {
-  title: string;
-  date: string;
 };
 
 export const MakeMonth: React.FC<Props> = (props: Props) => {
@@ -81,6 +77,16 @@ export const MakeMonth: React.FC<Props> = (props: Props) => {
                     addSchedule={props.addSchedule}
                     removeSchedule={props.removeSchedule}
                     rewriteSchedule={props.rewriteSchedule}
+                    holidayList={props.holidayList.filter((value) => {
+                      const month = (
+                        "00" + (props.nowMonth + 1).toString()
+                      ).slice(-2);
+                      const date = ("00" + oneday.toString()).slice(-2);
+                      return (
+                        value.date ===
+                        props.nowYear.toString() + "-" + month + "-" + date
+                      );
+                    })}
                     scheduleList={props.scheduleList.filter((value) => {
                       const month = (
                         "00" + (props.nowMonth + 1).toString()

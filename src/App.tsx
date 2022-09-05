@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Center } from "@chakra-ui/react";
 import { Table, Thead, Tr, Th, TableContainer } from "@chakra-ui/react";
 import { Spacer, HStack, Box, Text } from "@chakra-ui/react";
@@ -14,6 +14,11 @@ export type Schedule = {
   beforeTime: string;
   afterTime: string;
   memo: string;
+};
+
+export type Holidays = {
+  title: string;
+  date: string;
 };
 
 const App: React.FC = () => {
@@ -91,6 +96,47 @@ const App: React.FC = () => {
     });
   };
 
+  const [holidayList, setHolidayList] = useState<Holidays[]>([]);
+
+  // getJSONする処理  ここもuseEffect、use XX を用いて１回だけ処理させる
+  // useStateを使わずに、
+  useEffect(() => {
+    const req = new XMLHttpRequest(); // XMLHttpRequest オブジェクトを生成する
+    req.onreadystatechange = () => {
+      if (req.readyState == 4 && req.status == 200) {
+        // サーバーからのレスポンスが完了し、かつ、通信が正常に終了した場合
+
+        // 初期化(useEffectを２回実行しないようにする)
+        setHolidayList((prevList: Holidays[]) => {
+          let tempScheduleList = [...prevList];
+          tempScheduleList = [];
+          return tempScheduleList;
+        });
+
+        const jsonObj = JSON.parse(req.responseText);
+
+        for (const key in jsonObj) {
+          if (jsonObj.hasOwnProperty(key)) {
+            const val = jsonObj[key];
+
+            const temp: Holidays = {
+              title: val,
+              date: key,
+            };
+
+            setHolidayList((prevList: Holidays[]) => {
+              const tempScheduleList = [...prevList];
+              tempScheduleList.push(temp);
+              return tempScheduleList;
+            });
+          }
+        }
+      }
+    };
+    req.open("GET", "https://holidays-jp.github.io/api/v1/date.json", false); // HTTPメソッドとアクセスするサーバーの　URL　を指定
+    req.send(null); // 実際にサーバーへリクエストを送信
+  }, []);
+
   return (
     <Center
       sx={{
@@ -159,6 +205,12 @@ const App: React.FC = () => {
               addSchedule={addSchedule}
               removeSchedule={removeSchedule}
               rewriteSchedule={rewriteSchedule}
+              holidayList={holidayList.filter((value) => {
+                const month = ("00" + (nowMonth + 1).toString()).slice(-2);
+                const deleted = value.date.slice(0, -2);
+                // value.date: yyyy-mm-dd
+                return deleted === nowYear.toString() + "-" + month + "-";
+              })}
             />
           </Table>
         </TableContainer>

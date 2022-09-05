@@ -31,8 +31,7 @@ import { IoMdTime } from "react-icons/io";
 import { RiSave3Line } from "react-icons/ri";
 
 import { IconContext } from "react-icons";
-import type { Schedule } from "./App";
-import type { Holidays } from "./MakeMonth";
+import type { Holidays, Schedule } from "./App";
 
 type Props = {
   nowYear: number;
@@ -40,6 +39,7 @@ type Props = {
   oneday: number;
 
   scheduleList: Schedule[];
+  holidayList: Holidays[];
   addSchedule: (Schedule: Schedule) => void;
   removeSchedule: (Schedule: Schedule) => void;
   rewriteSchedule: (oldSchedule: Schedule, newSchedule: Schedule) => void;
@@ -62,6 +62,12 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     onOpen: onOpenEditPopover,
     onClose: onCloseEditPopover,
     isOpen: isOpenEditPopover,
+  } = useDisclosure();
+
+  const {
+    onOpen: onOpenHolidayPopover,
+    onClose: onCloseHolidayPopover,
+    isOpen: isOpenHolidayPopover,
   } = useDisclosure();
 
   const [TitleInput, setTytleInput] = useState<string>("");
@@ -101,9 +107,10 @@ export const Oneday: React.FC<Props> = (props: Props) => {
 
   const handleChangeInitInput = () => {
     if (!isOpenTitleInputPopover) {
-      if (!(TitleInput === "") && !isOpenDetailPopover && !isOpenEditPopover) {
+      if (!isOpenDetailPopover && !isOpenEditPopover) {
         setTytleInput("");
         setDateInput(() => {
+          console.log("？？？");
           const month = ("00" + (props.nowMonth + 1).toString()).slice(-2);
           const date = ("00" + props.oneday.toString()).slice(-2);
           return props.nowYear.toString() + "-" + month + "-" + date;
@@ -112,7 +119,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         setAfterTimeInput("");
         setMemoInput("");
       }
-      if (!isOpenDetailPopover && !isOpenEditPopover) onOpenTitleInputPopover();
+      if (!isOpenDetailPopover && !isOpenEditPopover && !isOpenHolidayPopover)
+        onOpenTitleInputPopover();
     }
   };
 
@@ -122,6 +130,15 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   ) => {
     setPlanNumber(index);
     onOpenDetailPopover();
+    event.stopPropagation();
+  };
+
+  const handleChangeInitHoliday = (
+    event: React.MouseEvent<HTMLDivElement>,
+    index: number
+  ) => {
+    setPlanNumber(index);
+    onOpenHolidayPopover();
     event.stopPropagation();
   };
 
@@ -191,6 +208,65 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         nowMonth={props.nowMonth}
         oneday={props.oneday}
       />
+      {/* 予定詳細ポップオーバー */}
+      <Popover
+        isOpen={isOpenHolidayPopover}
+        onClose={onCloseHolidayPopover}
+        placement="right"
+      >
+        <PopoverTrigger>
+          <Box>
+            {/*祝日を表示*/}
+            {props.holidayList.length >= 1 && (
+              <>
+                {props.holidayList.map((holidayList, index) => (
+                  <Box
+                    key={index}
+                    bg="green.400"
+                    color="white"
+                    onClick={(event) => handleChangeInitHoliday(event, index)}
+                  >
+                    {holidayList.title}
+                  </Box>
+                ))}
+              </>
+            )}
+          </Box>
+        </PopoverTrigger>
+        <PopoverContent p={5}>
+          <FocusLock returnFocus persistentFocus={false}>
+            <PopoverArrow />
+            <PopoverHeader fontWeight="semibold">
+              <HStack>
+                <Text>予定の詳細</Text>
+                <Spacer />
+                <PopoverCloseButton />
+              </HStack>
+            </PopoverHeader>
+            <VStack spacing={4} align="flex-start">
+              <IconContext.Provider value={{ size: "30px" }}>
+                <Text> </Text>
+                {props.holidayList.length && (
+                  <>
+                    <HStack>
+                      <MdTitle />
+                      <Text>{props.holidayList[planNumber].title}</Text>
+                    </HStack>
+                    <HStack>
+                      <FaRegCalendarCheck />
+                      <Text>{props.holidayList[planNumber].date}</Text>
+                    </HStack>
+                    <HStack>
+                      <IoMdTime />
+                      <Text>終日</Text>
+                    </HStack>
+                  </>
+                )}
+              </IconContext.Provider>
+            </VStack>
+          </FocusLock>
+        </PopoverContent>
+      </Popover>
 
       {/* 予定詳細ポップオーバー */}
       <Popover
