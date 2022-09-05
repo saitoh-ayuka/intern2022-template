@@ -5,6 +5,9 @@ import { Spacer, HStack, Box, Text } from "@chakra-ui/react";
 import { IconContext } from "react-icons";
 import { GoCalendar } from "react-icons/go";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
+import { SiSpring } from "react-icons/si";
+import { BsSun, BsSnow2 } from "react-icons/bs";
+import { GiMapleLeaf } from "react-icons/gi";
 import type React from "react";
 import { MakeMonth } from "./MakeMonth";
 
@@ -160,6 +163,28 @@ const App: React.FC = () => {
           <Spacer />
           <IconContext.Provider value={{ size: "50px" }}>
             <BiChevronLeft onClick={handleChevronLeftClick} /*前月へ*/ />
+            {
+              // 春なら、春のアイコン
+              nowMonth + 1 >= 3 && nowMonth + 1 <= 5 && (
+                <SiSpring color="pink" />
+              )
+            }
+            {
+              // 夏のアイコン
+              nowMonth + 1 >= 6 && nowMonth + 1 <= 8 && <BsSun color="tomato" />
+            }
+            {
+              // 秋のアイコン
+              nowMonth + 1 >= 9 && nowMonth + 1 <= 11 && (
+                <GiMapleLeaf color="brown" />
+              )
+            }
+            {
+              // 冬のアイコン
+              nowMonth + 1 == 1 ||
+                nowMonth + 1 == 2 ||
+                (nowMonth + 1 == 12 && <BsSnow2 color="Blue" />)
+            }
             <Text fontSize="xl">
               {nowYear}年 {nowMonth + 1}月
             </Text>
