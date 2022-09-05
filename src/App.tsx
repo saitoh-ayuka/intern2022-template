@@ -14,6 +14,7 @@ export type Schedule = {
   beforeTime: string;
   afterTime: string;
   memo: string;
+  allday: boolean;
 };
 
 export type Holidays = {
@@ -70,7 +71,8 @@ const App: React.FC = () => {
           item.date == oldSchedule.date &&
           item.beforeTime == oldSchedule.beforeTime &&
           item.afterTime == oldSchedule.afterTime &&
-          item.memo == oldSchedule.memo
+          item.memo == oldSchedule.memo &&
+          item.allday == oldSchedule.allday
       );
       if (indexNumber != -1) tempScheduleList.splice(indexNumber, 1);
 
@@ -87,7 +89,8 @@ const App: React.FC = () => {
           item.date == oldSchedule.date &&
           item.beforeTime == oldSchedule.beforeTime &&
           item.afterTime == oldSchedule.afterTime &&
-          item.memo == oldSchedule.memo
+          item.memo == oldSchedule.memo &&
+          item.allday == oldSchedule.allday
       );
       if (indexNumber != -1)
         tempScheduleList.splice(indexNumber, 1, newSchedule);
@@ -206,7 +209,6 @@ const App: React.FC = () => {
               holidayList={holidayList.filter((value) => {
                 const month = ("00" + (nowMonth + 1).toString()).slice(-2);
                 const deleted = value.date.slice(0, -2);
-                // value.date: yyyy-mm-dd
                 return deleted === nowYear.toString() + "-" + month + "-";
               })}
             />

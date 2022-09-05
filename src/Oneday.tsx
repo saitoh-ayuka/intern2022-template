@@ -4,6 +4,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormHelperText,
+  FormLabel,
   HStack,
   Input,
   Popover,
@@ -13,6 +14,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spacer,
+  Switch,
   Text,
   Textarea,
   useDisclosure,
@@ -76,6 +78,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     isOpen: isOpenHolidayPopover,
   } = useDisclosure();
 
+  const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(false);
+
   const [TitleInput, setTytleInput] = useState<string>("");
   const [MemoInput, setMemoInput] = useState<string>("");
   const [DateInput, setDateInput] = useState<string>("");
@@ -123,6 +127,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         setBeforeTimeInput("");
         setAfterTimeInput("");
         setMemoInput("");
+        setIsOpenAlldaySwitch(false);
       }
       if (!isOpenDetailPopover && !isOpenEditPopover && !isOpenHolidayPopover)
         onOpenTitleInputPopover();
@@ -155,10 +160,12 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         beforeTime: props.scheduleList[planNumber].beforeTime,
         afterTime: props.scheduleList[planNumber].afterTime,
         memo: props.scheduleList[planNumber].memo,
+        allday: props.scheduleList[planNumber].allday,
       });
       if (planNumber > 0) setPlanNumber(planNumber - 1);
       onCloseDetailPopover();
       onCloseEditPopover();
+      setIsOpenAlldaySwitch(false);
     }
   };
 
@@ -169,6 +176,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       beforeTime: BeforeTimeInput,
       afterTime: AfterTimeInput,
       memo: MemoInput,
+      allday: isOpenAlldaySwitch,
     });
     onCloseTitleInputPopover();
   };
@@ -182,6 +190,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     setBeforeTimeInput(props.scheduleList[planNumber].beforeTime);
     setAfterTimeInput(props.scheduleList[planNumber].afterTime);
     setMemoInput(props.scheduleList[planNumber].memo);
+    setIsOpenAlldaySwitch(props.scheduleList[planNumber].allday);
   };
 
   const onCloseAndEditEndPopover = () => {
@@ -192,6 +201,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         beforeTime: props.scheduleList[planNumber].beforeTime,
         afterTime: props.scheduleList[planNumber].afterTime,
         memo: props.scheduleList[planNumber].memo,
+        allday: props.scheduleList[planNumber].allday,
       },
       {
         title: TitleInput,
@@ -199,6 +209,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         beforeTime: BeforeTimeInput,
         afterTime: AfterTimeInput,
         memo: MemoInput,
+        allday: isOpenAlldaySwitch,
       }
     );
 
@@ -216,6 +227,12 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       setTytleInput("");
     if (!isOpenEditPopover && !isOpenDetailPopover)
       onOpenViewOnlyTitleInputPopover();
+  };
+
+  const onAlldaySwitch = () => {
+    setBeforeTimeInput("");
+    setAfterTimeInput("");
+    setIsOpenAlldaySwitch((prev) => !prev);
   };
 
   return (
@@ -345,11 +362,19 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                     </HStack>
                     <HStack>
                       <IoMdTime />
-                      <Text>{props.scheduleList[planNumber].beforeTime}</Text>
                       <Text>
-                        {props.scheduleList[planNumber].afterTime && <>~</>}
+                        {props.scheduleList[planNumber].allday && <>終日</>}
+                        {!props.scheduleList[planNumber].allday &&
+                          props.scheduleList[planNumber].beforeTime}
                       </Text>
-                      <Text>{props.scheduleList[planNumber].afterTime}</Text>
+                      <Text>
+                        {!props.scheduleList[planNumber].allday &&
+                          props.scheduleList[planNumber].afterTime && <>~</>}
+                      </Text>
+                      <Text>
+                        {!props.scheduleList[planNumber].allday &&
+                          props.scheduleList[planNumber].afterTime}
+                      </Text>
                     </HStack>
                     <HStack>
                       <BsChatText />
@@ -420,6 +445,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                   type="time"
                   value={BeforeTimeInput}
                   onChange={handleBeforeTimeChangeDynamic}
+                  readOnly={isOpenAlldaySwitch}
                 />
                 <Text>~</Text>
                 <Input
@@ -427,7 +453,17 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                   type="time"
                   value={AfterTimeInput}
                   onChange={handleAfterTimeChangeDynamic}
+                  readOnly={isOpenAlldaySwitch}
                 />
+              </HStack>
+              <HStack>
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel mb="0">終日にしますか？</FormLabel>
+                  <Switch
+                    isChecked={isOpenAlldaySwitch}
+                    onChange={onAlldaySwitch}
+                  />
+                </FormControl>
               </HStack>
               <Textarea
                 id="memo"
@@ -503,6 +539,15 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                   value={AfterTimeInput}
                   onChange={handleAfterTimeChangeDynamic}
                 />
+              </HStack>
+              <HStack>
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel mb="0">終日にしますか？</FormLabel>
+                  <Switch
+                    isChecked={isOpenAlldaySwitch}
+                    onChange={onAlldaySwitch}
+                  />
+                </FormControl>
               </HStack>
               <Textarea
                 id="memo"
