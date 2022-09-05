@@ -53,6 +53,12 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   } = useDisclosure();
 
   const {
+    onOpen: onOpenViewOnlyTitleInputPopover,
+    onClose: onCloseViewOnlyTitleInputPopover,
+    isOpen: isViewOnlyTitleInputPopover,
+  } = useDisclosure();
+
+  const {
     onOpen: onOpenDetailPopover,
     onClose: onCloseDetailPopover,
     isOpen: isOpenDetailPopover,
@@ -110,7 +116,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       if (!isOpenDetailPopover && !isOpenEditPopover) {
         setTytleInput("");
         setDateInput(() => {
-          console.log("？？？");
           const month = ("00" + (props.nowMonth + 1).toString()).slice(-2);
           const date = ("00" + props.oneday.toString()).slice(-2);
           return props.nowYear.toString() + "-" + month + "-" + date;
@@ -200,13 +205,30 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     onCloseTitleInputPopover();
   };
 
+  const onMouseOut = () => {
+    if (!isOpenTitleInputPopover) onCloseViewOnlyTitleInputPopover();
+  };
+
+  const onMouseOver = () => {
+    if (!isOpenTitleInputPopover && !isOpenEditPopover && !isOpenDetailPopover)
+      setTytleInput("");
+    if (!isOpenEditPopover) onOpenViewOnlyTitleInputPopover();
+  };
+
   return (
-    <Box h="100%" w="100%" onClick={handleChangeInitInput}>
+    <Box
+      h="100%"
+      w="100%"
+      onClick={handleChangeInitInput}
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
+    >
       {/* １日〜３１日の表示、今日なら色を分ける */}
       <ViewDays
         nowYear={props.nowYear}
         nowMonth={props.nowMonth}
         oneday={props.oneday}
+        holidayList={props.holidayList}
       />
       {/* 予定詳細ポップオーバー */}
       <Popover
@@ -425,7 +447,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       >
         <PopoverTrigger>
           <Box>
-            {isOpenTitleInputPopover && (
+            {isViewOnlyTitleInputPopover && (
               <Box bg="green.200" color="white">
                 {TitleInput === "" ? "新規作成..." : TitleInput}
               </Box>

@@ -98,8 +98,6 @@ const App: React.FC = () => {
 
   const [holidayList, setHolidayList] = useState<Holidays[]>([]);
 
-  // getJSONする処理  ここもuseEffect、use XX を用いて１回だけ処理させる
-  // useStateを使わずに、
   useEffect(() => {
     const req = new XMLHttpRequest(); // XMLHttpRequest オブジェクトを生成する
     req.onreadystatechange = () => {
@@ -168,7 +166,7 @@ const App: React.FC = () => {
           <Table variant="simple" size="lg">
             <Thead>
               <Tr>
-                <Th border="1px solid black" px={2}>
+                <Th border="1px solid black" px={2} color="tomato">
                   <Text>日曜日</Text>
                 </Th>
 
@@ -192,7 +190,7 @@ const App: React.FC = () => {
                   <Text>金曜日</Text>
                 </Th>
 
-                <Th border="1px solid black" px={2}>
+                <Th border="1px solid black" px={2} color="Blue">
                   <Text>土曜日</Text>
                 </Th>
               </Tr>
