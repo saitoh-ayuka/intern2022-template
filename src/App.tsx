@@ -13,7 +13,7 @@ export type Schedule = {
   date: string;
   beforeTime: string | null;
   afterTime: string | null;
-  memo: string;
+  memo: string | null;
   allday: boolean;
   id: number;
 };

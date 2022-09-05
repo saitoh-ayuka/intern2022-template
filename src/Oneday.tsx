@@ -81,7 +81,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(false);
 
   const [TitleInput, setTytleInput] = useState<string>("");
-  const [MemoInput, setMemoInput] = useState<string>("");
+  const [MemoInput, setMemoInput] = useState<string | null>("");
   const [DateInput, setDateInput] = useState<string>("");
   const [BeforeTimeInput, setBeforeTimeInput] = useState<string | null>("");
   const [AfterTimeInput, setAfterTimeInput] = useState<string | null>("");
@@ -474,7 +474,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
               <Textarea
                 id="memo"
                 placeholder="memo"
-                value={MemoInput}
+                value={MemoInput ?? ""}
                 onChange={handleMemoChangeDynamic}
               />
             </VStack>
@@ -558,7 +558,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
               <Textarea
                 id="memo"
                 placeholder="memo"
-                value={MemoInput}
+                value={MemoInput ?? ""}
                 onChange={handleMemoChangeDynamic}
               />
             </VStack>
