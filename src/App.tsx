@@ -11,10 +11,11 @@ import { MakeMonth } from "./MakeMonth";
 export type Schedule = {
   title: string;
   date: string;
-  beforeTime: string;
-  afterTime: string;
+  beforeTime: string | null;
+  afterTime: string | null;
   memo: string;
   allday: boolean;
+  id: number;
 };
 
 export type Holidays = {
@@ -84,6 +85,7 @@ const App: React.FC = () => {
     setScheduleList((prevList: Schedule[]) => {
       const tempScheduleList = [...prevList];
       const indexNumber = tempScheduleList.findIndex(
+        // ここ、id比べるだけで良くなる（データベースの導入によって）
         (item: Schedule) =>
           item.title == oldSchedule.title &&
           item.date == oldSchedule.date &&

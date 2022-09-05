@@ -83,8 +83,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const [TitleInput, setTytleInput] = useState<string>("");
   const [MemoInput, setMemoInput] = useState<string>("");
   const [DateInput, setDateInput] = useState<string>("");
-  const [BeforeTimeInput, setBeforeTimeInput] = useState<string>("");
-  const [AfterTimeInput, setAfterTimeInput] = useState<string>("");
+  const [BeforeTimeInput, setBeforeTimeInput] = useState<string | null>("");
+  const [AfterTimeInput, setAfterTimeInput] = useState<string | null>("");
   const [planNumber, setPlanNumber] = useState<number>(0);
 
   const handleInputChangeDynamic = (
@@ -100,11 +100,11 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   }) => setDateInput(event.target.value);
 
   const handleBeforeTimeChangeDynamic = (event: {
-    target: { value: React.SetStateAction<string> };
+    target: { value: React.SetStateAction<string | null> };
   }) => setBeforeTimeInput(event.target.value);
 
   const handleAfterTimeChangeDynamic = (event: {
-    target: { value: React.SetStateAction<string> };
+    target: { value: React.SetStateAction<string | null> };
   }) => setAfterTimeInput(event.target.value);
 
   const handleMemoChangeDynamic = (
@@ -124,8 +124,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
           const date = ("00" + props.oneday.toString()).slice(-2);
           return props.nowYear.toString() + "-" + month + "-" + date;
         });
-        setBeforeTimeInput("");
-        setAfterTimeInput("");
+        setBeforeTimeInput(null);
+        setAfterTimeInput(null);
         setMemoInput("");
         setIsOpenAlldaySwitch(false);
       }
@@ -155,12 +155,14 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const handleChangeDeletePlan = () => {
     if (window.confirm("本当に削除してもよろしいでしょうか？")) {
       props.removeSchedule({
+        // ここもid渡すだけになる
         title: props.scheduleList[planNumber].title,
         date: props.scheduleList[planNumber].date,
         beforeTime: props.scheduleList[planNumber].beforeTime,
         afterTime: props.scheduleList[planNumber].afterTime,
         memo: props.scheduleList[planNumber].memo,
         allday: props.scheduleList[planNumber].allday,
+        id: props.scheduleList[planNumber].id,
       });
       if (planNumber > 0) setPlanNumber(planNumber - 1);
       onCloseDetailPopover();
@@ -177,6 +179,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       afterTime: AfterTimeInput,
       memo: MemoInput,
       allday: isOpenAlldaySwitch,
+      id: 0,
     });
     onCloseTitleInputPopover();
   };
@@ -202,14 +205,17 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         afterTime: props.scheduleList[planNumber].afterTime,
         memo: props.scheduleList[planNumber].memo,
         allday: props.scheduleList[planNumber].allday,
+        id: props.scheduleList[planNumber].id,
       },
       {
+        // idは変わらない
         title: TitleInput,
         date: DateInput,
         beforeTime: BeforeTimeInput,
         afterTime: AfterTimeInput,
         memo: MemoInput,
         allday: isOpenAlldaySwitch,
+        id: props.scheduleList[planNumber].id,
       }
     );
 
@@ -230,8 +236,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   };
 
   const onAlldaySwitch = () => {
-    setBeforeTimeInput("");
-    setAfterTimeInput("");
+    setBeforeTimeInput(null);
+    setAfterTimeInput(null);
     setIsOpenAlldaySwitch((prev) => !prev);
   };
 
@@ -443,7 +449,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                 <Input
                   size="md"
                   type="time"
-                  value={BeforeTimeInput}
+                  value={BeforeTimeInput ?? ""}
                   onChange={handleBeforeTimeChangeDynamic}
                   readOnly={isOpenAlldaySwitch}
                 />
@@ -451,7 +457,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                 <Input
                   size="md"
                   type="time"
-                  value={AfterTimeInput}
+                  value={AfterTimeInput ?? ""}
                   onChange={handleAfterTimeChangeDynamic}
                   readOnly={isOpenAlldaySwitch}
                 />
@@ -529,14 +535,14 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                 <Input
                   size="md"
                   type="time"
-                  value={BeforeTimeInput}
+                  value={BeforeTimeInput ?? ""}
                   onChange={handleBeforeTimeChangeDynamic}
                 />
                 <Text>~</Text>
                 <Input
                   size="md"
                   type="time"
-                  value={AfterTimeInput}
+                  value={AfterTimeInput ?? ""}
                   onChange={handleAfterTimeChangeDynamic}
                 />
               </HStack>
