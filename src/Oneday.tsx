@@ -148,16 +148,18 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   };
 
   const handleChangeDeletePlan = () => {
-    props.removeSchedule({
-      title: props.scheduleList[planNumber].title,
-      date: props.scheduleList[planNumber].date,
-      beforeTime: props.scheduleList[planNumber].beforeTime,
-      afterTime: props.scheduleList[planNumber].afterTime,
-      memo: props.scheduleList[planNumber].memo,
-    });
-    if (planNumber > 0) setPlanNumber(planNumber - 1);
-    onCloseDetailPopover();
-    onCloseEditPopover();
+    if (window.confirm("本当に削除してもよろしいでしょうか？")) {
+      props.removeSchedule({
+        title: props.scheduleList[planNumber].title,
+        date: props.scheduleList[planNumber].date,
+        beforeTime: props.scheduleList[planNumber].beforeTime,
+        afterTime: props.scheduleList[planNumber].afterTime,
+        memo: props.scheduleList[planNumber].memo,
+      });
+      if (planNumber > 0) setPlanNumber(planNumber - 1);
+      onCloseDetailPopover();
+      onCloseEditPopover();
+    }
   };
 
   const onCloseAndMakePlanPopover = () => {
@@ -212,7 +214,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const onMouseOver = () => {
     if (!isOpenTitleInputPopover && !isOpenEditPopover && !isOpenDetailPopover)
       setTytleInput("");
-    if (!isOpenEditPopover) onOpenViewOnlyTitleInputPopover();
+    if (!isOpenEditPopover && !isOpenDetailPopover)
+      onOpenViewOnlyTitleInputPopover();
   };
 
   return (
@@ -230,7 +233,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         oneday={props.oneday}
         holidayList={props.holidayList}
       />
-      {/* 予定詳細ポップオーバー */}
+      {/* 祝日ポップオーバー */}
       <Popover
         isOpen={isOpenHolidayPopover}
         onClose={onCloseHolidayPopover}
@@ -289,7 +292,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
           </FocusLock>
         </PopoverContent>
       </Popover>
-
       {/* 予定詳細ポップオーバー */}
       <Popover
         isOpen={isOpenDetailPopover}
