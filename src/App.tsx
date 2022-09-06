@@ -10,16 +10,8 @@ import { BsSun, BsSnow2 } from "react-icons/bs";
 import { GiMapleLeaf } from "react-icons/gi";
 import type React from "react";
 import { MakeMonth } from "./MakeMonth";
-
-export type Schedule = {
-  title: string;
-  date: string;
-  beforeTime: string | null;
-  afterTime: string | null;
-  memo: string | null;
-  allday: boolean;
-  id: number;
-};
+import type { Schedule, ScheduleTable } from "./@types/schedule";
+import { supabase } from "./Datebase";
 
 export type Holidays = {
   title: string;
@@ -76,6 +68,7 @@ const App: React.FC = () => {
           item.beforeTime == oldSchedule.beforeTime &&
           item.afterTime == oldSchedule.afterTime &&
           item.memo == oldSchedule.memo &&
+          // item.color == oldSchedule.color &&
           item.allday == oldSchedule.allday
       );
       if (indexNumber != -1) tempScheduleList.splice(indexNumber, 1);
@@ -95,6 +88,7 @@ const App: React.FC = () => {
           item.beforeTime == oldSchedule.beforeTime &&
           item.afterTime == oldSchedule.afterTime &&
           item.memo == oldSchedule.memo &&
+          // item.color == oldSchedule.color &&
           item.allday == oldSchedule.allday
       );
       if (indexNumber != -1)
@@ -112,35 +106,58 @@ const App: React.FC = () => {
       if (req.readyState == 4 && req.status == 200) {
         // サーバーからのレスポンスが完了し、かつ、通信が正常に終了した場合
 
-        // 初期化(useEffectを２回実行しないようにする)
-        setHolidayList((prevList: Holidays[]) => {
-          let tempScheduleList = [...prevList];
-          tempScheduleList = [];
-          return tempScheduleList;
-        });
+        const jsonObj = JSON.parse(req.responseText) as {
+          [key: string]: string;
+        };
 
-        const jsonObj = JSON.parse(req.responseText);
-
-        for (const key in jsonObj) {
-          if (jsonObj.hasOwnProperty(key)) {
-            const val = jsonObj[key];
-
+        const changed: Holidays[] = Object.entries(jsonObj).map(
+          ([key, value]) => {
             const temp: Holidays = {
-              title: val,
+              title: value,
               date: key,
             };
 
-            setHolidayList((prevList: Holidays[]) => {
-              const tempScheduleList = [...prevList];
-              tempScheduleList.push(temp);
-              return tempScheduleList;
-            });
+            return temp;
           }
-        }
+        );
+
+        setHolidayList(changed);
       }
     };
-    req.open("GET", "https://holidays-jp.github.io/api/v1/date.json", false); // HTTPメソッドとアクセスするサーバーの　URL　を指定
+    req.open("GET", "https://holidays-jp.github.io/api/v1/date.json", false); // HTTPメソッドとアクセスするサーバーの URL を指定
     req.send(null); // 実際にサーバーへリクエストを送信
+  }, []);
+
+  useEffect(() => {
+    const setScheduleFromDB = async () => {
+      const response = await supabase
+        .from<ScheduleTable>("Schedule") // Message maps to the type of the row in your database.
+        .select("*");
+
+      const list = response.data ?? [];
+
+      // mapを用いて、list.mapでScheduleListをScheduleに！
+      const changed: Schedule[] = list.map((schedule) => {
+        // beforeTimeとAfterTimeを秒数なくすように変換する
+
+        const beforeTimeSecondDeleted = (schedule.beforeTime ?? "").slice(0, 5);
+        const afterTimeSecondDeleted = (schedule.afterTime ?? "").slice(0, 5);
+
+        return {
+          title: schedule.title,
+          date: schedule.date,
+          beforeTime: beforeTimeSecondDeleted,
+          afterTime: afterTimeSecondDeleted,
+          memo: schedule.memo,
+          allday: schedule.allday,
+          id: schedule.id,
+        };
+      });
+
+      setScheduleList(changed);
+    };
+
+    void setScheduleFromDB();
   }, []);
 
   return (
@@ -183,7 +200,7 @@ const App: React.FC = () => {
               // 冬のアイコン
               nowMonth + 1 == 1 ||
                 nowMonth + 1 == 2 ||
-                (nowMonth + 1 == 12 && <BsSnow2 color="Blue" />)
+                (nowMonth + 1 == 12 && <BsSnow2 color="#63B3ED" />)
             }
             <Text fontSize="xl">
               {nowYear}年 {nowMonth + 1}月
@@ -220,7 +237,7 @@ const App: React.FC = () => {
                   <Text>金曜日</Text>
                 </Th>
 
-                <Th border="1px solid black" px={2} color="Blue">
+                <Th border="1px solid black" px={2} color="#63B3ED">
                   <Text>土曜日</Text>
                 </Th>
               </Tr>

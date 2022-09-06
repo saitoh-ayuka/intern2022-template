@@ -1,6 +1,7 @@
 import { Tr, Td, Tbody } from "@chakra-ui/react";
 import { Oneday } from "./Oneday";
-import type { Holidays, Schedule } from "./App";
+import type { Holidays } from "./App";
+import type { Schedule } from "./@types/schedule";
 
 type Props = {
   nowYear: number;

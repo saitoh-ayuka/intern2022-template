@@ -29,10 +29,10 @@ export const ViewDays: React.FC<Props> = (props: Props) => {
             <Text color="green.300">{props.oneday}日</Text>
           </>
         )}
-      {/* 普通の土日 */}
+      {/* 普通の土曜 */}
       {props.oneday != today.getDate() && oneday.getDay() == 6 && (
         <>
-          <Text color="Blue">{props.oneday}日</Text>
+          <Text color="#63B3ED">{props.oneday}日</Text>
         </>
       )}
       {/* 普通の日曜 */}
