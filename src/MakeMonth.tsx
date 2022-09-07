@@ -1,7 +1,7 @@
 import { Tr, Td, Tbody } from "@chakra-ui/react";
 import { Oneday } from "./Oneday";
 import type { Holidays } from "./App";
-import type { Schedule } from "./@types/schedule";
+import type { addSchedule, Schedule } from "./@types/Schedule";
 
 type Props = {
   nowYear: number;
@@ -9,9 +9,9 @@ type Props = {
   scheduleList: Schedule[];
   holidayList: Holidays[];
 
-  addSchedule: (Schedule: Schedule) => void;
-  removeSchedule: (Schedule: Schedule) => void;
-  rewriteSchedule: (oldSchedule: Schedule, newSchedule: Schedule) => void;
+  addSchedule: (Schedule: addSchedule) => void;
+  removeSchedule: (oldScheduleId: number) => void;
+  rewriteSchedule: (newSchedule: Schedule, oldScheduleId: number) => void;
 };
 
 export const MakeMonth: React.FC<Props> = (props: Props) => {

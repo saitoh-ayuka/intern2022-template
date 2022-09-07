@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import {
   Box,
   FormControl,
@@ -16,7 +16,6 @@ import {
   Radio,
   RadioGroup,
   Spacer,
-  Stack,
   Switch,
   Text,
   Textarea,
@@ -38,7 +37,7 @@ import { IoIosColorFill } from "react-icons/io";
 
 import { IconContext } from "react-icons";
 import type { Holidays } from "./App";
-import type { Schedule } from "./@types/schedule";
+import type { addSchedule, Schedule } from "./@types/Schedule";
 
 type Props = {
   nowYear: number;
@@ -47,9 +46,9 @@ type Props = {
 
   scheduleList: Schedule[];
   holidayList: Holidays[];
-  addSchedule: (Schedule: Schedule) => void;
-  removeSchedule: (Schedule: Schedule) => void;
-  rewriteSchedule: (oldSchedule: Schedule, newSchedule: Schedule) => void;
+  addSchedule: (Schedule: addSchedule) => void;
+  removeSchedule: (oldScheduleId: number) => void;
+  rewriteSchedule: (newSchedule: Schedule, oldScheduleId: number) => void;
 };
 
 export const Oneday: React.FC<Props> = (props: Props) => {
@@ -168,17 +167,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
 
   const handleChangeDeletePlan = () => {
     if (window.confirm("本当に削除してもよろしいでしょうか？")) {
-      props.removeSchedule({
-        // ここもid渡すだけになる
-        title: props.scheduleList[planNumber].title,
-        date: props.scheduleList[planNumber].date,
-        beforeTime: props.scheduleList[planNumber].beforeTime,
-        afterTime: props.scheduleList[planNumber].afterTime,
-        memo: props.scheduleList[planNumber].memo,
-        allday: props.scheduleList[planNumber].allday,
-        ///color: props.scheduleList[planNumber].color,
-        id: props.scheduleList[planNumber].id,
-      });
+      props.removeSchedule(props.scheduleList[planNumber].id);
       if (planNumber > 0) setPlanNumber(planNumber - 1);
       onCloseDetailPopover();
       onCloseEditPopover();
@@ -186,23 +175,18 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const handleChangeColorsChange = () => {
-    //setColorNumber();
-    //switch (ColorNumber) {
-    //}
-  };
-
   const onCloseAndMakePlanPopover = () => {
-    props.addSchedule({
-      title: TitleInput,
-      date: DateInput,
-      beforeTime: BeforeTimeInput,
-      afterTime: AfterTimeInput,
-      memo: MemoInput,
-      allday: isOpenAlldaySwitch,
-      //color: ColorNumber,
-      id: 0,
-    });
+    if (TitleInput) {
+      props.addSchedule({
+        title: TitleInput,
+        date: DateInput,
+        beforeTime: BeforeTimeInput,
+        afterTime: AfterTimeInput,
+        memo: MemoInput,
+        allday: isOpenAlldaySwitch,
+        //color: ColorNumber,
+      });
+    }
     setColorNumber("4");
     onCloseTitleInputPopover();
   };
@@ -222,26 +206,16 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const onCloseAndEditEndPopover = () => {
     props.rewriteSchedule(
       {
-        title: props.scheduleList[planNumber].title,
-        date: props.scheduleList[planNumber].date,
-        beforeTime: props.scheduleList[planNumber].beforeTime,
-        afterTime: props.scheduleList[planNumber].afterTime,
-        memo: props.scheduleList[planNumber].memo,
-        allday: props.scheduleList[planNumber].allday,
+        title: TitleInput,
+        date: DateInput,
+        beforeTime: BeforeTimeInput != "" ? BeforeTimeInput : null,
+        afterTime: AfterTimeInput != "" ? AfterTimeInput : null,
+        memo: MemoInput,
+        allday: isOpenAlldaySwitch,
         // color: props.scheduleList[planNumber].color,
         id: props.scheduleList[planNumber].id,
       },
-      {
-        // idは変わらない
-        title: TitleInput,
-        date: DateInput,
-        beforeTime: BeforeTimeInput,
-        afterTime: AfterTimeInput,
-        memo: MemoInput,
-        allday: isOpenAlldaySwitch,
-        // color: ColorNumber,
-        id: props.scheduleList[planNumber].id,
-      }
+      props.scheduleList[planNumber].id
     );
 
     handleChangeInitInput();
@@ -573,14 +547,16 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                   placement="right"
                 >
                   <PopoverTrigger>
-                    <IoIosColorFill onClick={onOpenColorChoisePopover} />
+                    <Box onClick={onOpenColorChoisePopover}>
+                      <IoIosColorFill />
+                    </Box>
                   </PopoverTrigger>
                   <PopoverContent>
                     <PopoverArrow />
                     <PopoverCloseButton />
                     <PopoverHeader>予定色の選択</PopoverHeader>
                     <RadioGroup
-                      onChange={() => handleChangeColorsChange()}
+                      onChange={() => setColorNumber(ColorNumber)}
                       value={ColorNumber}
                       defaultValue="4"
                     >

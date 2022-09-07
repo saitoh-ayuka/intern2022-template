@@ -10,7 +10,7 @@ import { BsSun, BsSnow2 } from "react-icons/bs";
 import { GiMapleLeaf } from "react-icons/gi";
 import type React from "react";
 import { MakeMonth } from "./MakeMonth";
-import type { Schedule, ScheduleTable } from "./@types/schedule";
+import type { addSchedule, Schedule, ScheduleTable } from "./@types/Schedule";
 import { supabase } from "./Datebase";
 
 export type Holidays = {
@@ -46,56 +46,58 @@ const App: React.FC = () => {
 
   const [scheduleList, setScheduleList] = useState<Schedule[]>([]);
 
-  const addSchedule = (newSchedule: Schedule) => {
-    //既存のscheduleList + 追加したい予定
-    setScheduleList((prevList: Schedule[]) => {
-      const tempScheduleList = [...prevList];
-      tempScheduleList.push(newSchedule);
-      return tempScheduleList;
+  const setScheduleFromDB = async () => {
+    const response = await supabase
+      .from<ScheduleTable>("Schedule") // Message maps to the type of the row in your database.
+      .select("*");
 
-      // return [...prevList, newSchedule];
+    const list = response.data ?? [];
+
+    // mapを用いて、list.mapでScheduleListをScheduleに！
+    const changed: Schedule[] = list.map((schedule) => {
+      // beforeTimeとAfterTimeを秒数なくすように変換する
+
+      const beforeTimeSecondDeleted = (schedule.beforeTime ?? "").slice(0, 5);
+      const afterTimeSecondDeleted = (schedule.afterTime ?? "").slice(0, 5);
+
+      return {
+        title: schedule.title,
+        date: schedule.date,
+        beforeTime: beforeTimeSecondDeleted,
+        afterTime: afterTimeSecondDeleted,
+        memo: schedule.memo,
+        allday: schedule.allday,
+        id: schedule.id,
+      };
     });
+
+    setScheduleList(changed);
   };
 
-  const removeSchedule = (oldSchedule: Schedule) => {
-    //既存のscheduleList ー 追加したい予定
-    setScheduleList((prevList: Schedule[]) => {
-      const tempScheduleList = [...prevList];
-      const indexNumber = tempScheduleList.findIndex(
-        (item: Schedule) =>
-          item.title == oldSchedule.title &&
-          item.date == oldSchedule.date &&
-          item.beforeTime == oldSchedule.beforeTime &&
-          item.afterTime == oldSchedule.afterTime &&
-          item.memo == oldSchedule.memo &&
-          // item.color == oldSchedule.color &&
-          item.allday == oldSchedule.allday
-      );
-      if (indexNumber != -1) tempScheduleList.splice(indexNumber, 1);
-
-      return tempScheduleList;
-    });
+  const addScheduleToDB = async (newSchedule: addSchedule) => {
+    const { data, error } = await supabase
+      .from<ScheduleTable>("Schedule") // Message maps to the type of the row in your database.
+      .insert(newSchedule);
+    void setScheduleFromDB();
   };
 
-  const rewriteSchedule = (oldSchedule: Schedule, newSchedule: Schedule) => {
-    setScheduleList((prevList: Schedule[]) => {
-      const tempScheduleList = [...prevList];
-      const indexNumber = tempScheduleList.findIndex(
-        // ここ、id比べるだけで良くなる（データベースの導入によって）
-        (item: Schedule) =>
-          item.title == oldSchedule.title &&
-          item.date == oldSchedule.date &&
-          item.beforeTime == oldSchedule.beforeTime &&
-          item.afterTime == oldSchedule.afterTime &&
-          item.memo == oldSchedule.memo &&
-          // item.color == oldSchedule.color &&
-          item.allday == oldSchedule.allday
-      );
-      if (indexNumber != -1)
-        tempScheduleList.splice(indexNumber, 1, newSchedule);
+  const removeScheduleFromDB = async (oldScheduleId: number) => {
+    const { data, error } = await supabase
+      .from<ScheduleTable>("Schedule")
+      .delete()
+      .match({ id: oldScheduleId });
+    void setScheduleFromDB();
+  };
 
-      return tempScheduleList;
-    });
+  const rewriteScheduleFromDB = async (
+    newSchedule: Schedule,
+    oldScheduleId: number
+  ) => {
+    const { data, error } = await supabase
+      .from<ScheduleTable>("Schedule")
+      .update(newSchedule)
+      .match({ id: oldScheduleId });
+    void setScheduleFromDB();
   };
 
   const [holidayList, setHolidayList] = useState<Holidays[]>([]);
@@ -129,34 +131,6 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const setScheduleFromDB = async () => {
-      const response = await supabase
-        .from<ScheduleTable>("Schedule") // Message maps to the type of the row in your database.
-        .select("*");
-
-      const list = response.data ?? [];
-
-      // mapを用いて、list.mapでScheduleListをScheduleに！
-      const changed: Schedule[] = list.map((schedule) => {
-        // beforeTimeとAfterTimeを秒数なくすように変換する
-
-        const beforeTimeSecondDeleted = (schedule.beforeTime ?? "").slice(0, 5);
-        const afterTimeSecondDeleted = (schedule.afterTime ?? "").slice(0, 5);
-
-        return {
-          title: schedule.title,
-          date: schedule.date,
-          beforeTime: beforeTimeSecondDeleted,
-          afterTime: afterTimeSecondDeleted,
-          memo: schedule.memo,
-          allday: schedule.allday,
-          id: schedule.id,
-        };
-      });
-
-      setScheduleList(changed);
-    };
-
     void setScheduleFromDB();
   }, []);
 
@@ -247,9 +221,9 @@ const App: React.FC = () => {
               nowMonth={nowMonth}
               nowYear={nowYear}
               scheduleList={scheduleList}
-              addSchedule={addSchedule}
-              removeSchedule={removeSchedule}
-              rewriteSchedule={rewriteSchedule}
+              addSchedule={addScheduleToDB}
+              removeSchedule={removeScheduleFromDB}
+              rewriteSchedule={rewriteScheduleFromDB}
               holidayList={holidayList.filter((value) => {
                 const month = ("00" + (nowMonth + 1).toString()).slice(-2);
                 const deleted = value.date.slice(0, -2);
