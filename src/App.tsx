@@ -67,6 +67,7 @@ const App: React.FC = () => {
         afterTime: afterTimeSecondDeleted,
         memo: schedule.memo,
         allday: schedule.allday,
+        color: schedule.color,
         id: schedule.id,
       };
     });

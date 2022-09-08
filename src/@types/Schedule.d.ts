@@ -16,6 +16,7 @@ export type Schedule = {
   afterTime: string | null;
   memo: string | null;
   allday: boolean;
+  color: string;
   id: number;
 };
 export type addSchedule = {
@@ -25,4 +26,5 @@ export type addSchedule = {
   afterTime: string | null;
   memo: string | null;
   allday: boolean;
+  color: string;
 };

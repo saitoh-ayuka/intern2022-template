@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import {
   Box,
   FormControl,
@@ -96,8 +96,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const [BeforeTimeInput, setBeforeTimeInput] = useState<string | null>("");
   const [AfterTimeInput, setAfterTimeInput] = useState<string | null>("");
   const [planNumber, setPlanNumber] = useState<number>(0);
-  const [ColorNumber, setColorNumber] = useState("4");
-  const [ColorName, setColorName] = useState("green");
+  const [ColorName, setColorName] = useState("green.400");
 
   const handleInputChangeDynamic = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -140,7 +139,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         setAfterTimeInput(null);
         setMemoInput("");
         setIsOpenAlldaySwitch(false);
-        setColorNumber("4");
       }
       if (!isOpenDetailPopover && !isOpenEditPopover && !isOpenHolidayPopover)
         onOpenTitleInputPopover();
@@ -184,10 +182,9 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         afterTime: AfterTimeInput,
         memo: MemoInput,
         allday: isOpenAlldaySwitch,
-        //color: ColorNumber,
+        color: ColorName,
       });
     }
-    setColorNumber("4");
     onCloseTitleInputPopover();
   };
 
@@ -201,6 +198,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     setAfterTimeInput(props.scheduleList[planNumber].afterTime);
     setMemoInput(props.scheduleList[planNumber].memo);
     setIsOpenAlldaySwitch(props.scheduleList[planNumber].allday);
+    setColorName(props.scheduleList[planNumber].color);
   };
 
   const onCloseAndEditEndPopover = () => {
@@ -212,7 +210,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         afterTime: AfterTimeInput != "" ? AfterTimeInput : null,
         memo: MemoInput,
         allday: isOpenAlldaySwitch,
-        // color: props.scheduleList[planNumber].color,
+        color: ColorName,
         id: props.scheduleList[planNumber].id,
       },
       props.scheduleList[planNumber].id
@@ -328,7 +326,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                 {props.scheduleList.map((schedule, index) => (
                   <Box
                     key={index}
-                    bg="green.400"
+                    bg={schedule.color}
                     color="white"
                     onClick={(event) => handleChangeInitDetail(event, index)}
                   >
@@ -491,43 +489,16 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       >
         <PopoverTrigger>
           <Box>
-            {isViewOnlyTitleInputPopover && ColorNumber == "1" && (
-              <Box bg="red.400" color="white">
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-            {isViewOnlyTitleInputPopover && ColorNumber == "2" && (
-              <Box bg="blue.200" color="white">
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-            {isViewOnlyTitleInputPopover && ColorNumber == "3" && (
-              <Box bg="yellow.200" color="black">
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-            {isViewOnlyTitleInputPopover && ColorNumber == "4" && (
-              <Box bg="green.200" color="white">
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-            {isViewOnlyTitleInputPopover && ColorNumber == "5" && (
-              <Box bg="orange.200" color="white">
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-            {isViewOnlyTitleInputPopover && ColorNumber == "6" && (
-              <Box bg="purple.200" color="white">
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-            {isViewOnlyTitleInputPopover && ColorNumber == "7" && (
-              <Box bg="pink.200" color="white">
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-            {isViewOnlyTitleInputPopover && ColorNumber == "8" && (
-              <Box bg="gray.400" color="white">
+            {isViewOnlyTitleInputPopover && (
+              <Box
+                bg={
+                  ColorName.slice(0, -3) +
+                  (ColorName != "red.400" && ColorName != "gray.400"
+                    ? "200"
+                    : "400")
+                }
+                color={ColorName != "yellow.400" ? "white" : "black"}
+              >
                 {TitleInput === "" ? "新規作成..." : TitleInput}
               </Box>
             )}
@@ -556,37 +527,48 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                     <PopoverCloseButton />
                     <PopoverHeader>予定色の選択</PopoverHeader>
                     <RadioGroup
-                      onChange={() => setColorNumber(ColorNumber)}
-                      value={ColorNumber}
-                      defaultValue="4"
+                      onChange={(ColorNumber) => setColorName(ColorNumber)}
+                      defaultValue="green.400"
                     >
                       <HStack>
                         <Text> </Text>
-                        <Radio size="sm" colorScheme="red" value="1">
+                        <Radio size="sm" colorScheme="red" value="red.400">
                           赤色
                         </Radio>
-                        <Radio size="sm" colorScheme="blue" value="2">
+                        <Radio size="sm" colorScheme="blue" value="blue.400">
                           青色
                         </Radio>
-                        <Radio size="sm" colorScheme="yellow" value="3">
+                        <Radio
+                          size="sm"
+                          colorScheme="yellow"
+                          value="yellow.400"
+                        >
                           黄色
                         </Radio>
-                        <Radio size="sm" colorScheme="green" value="4">
+                        <Radio size="sm" colorScheme="green" value="green.400">
                           緑色
                         </Radio>
                       </HStack>
                       <HStack>
                         <Text> </Text>
-                        <Radio size="sm" colorScheme="orange" value="5">
+                        <Radio
+                          size="sm"
+                          colorScheme="orange"
+                          value="orange.400"
+                        >
                           橙色
                         </Radio>
-                        <Radio size="sm" colorScheme="purple" value="6">
+                        <Radio
+                          size="sm"
+                          colorScheme="purple"
+                          value="purple.400"
+                        >
                           紫色
                         </Radio>
-                        <Radio size="sm" colorScheme="pink" value="7">
+                        <Radio size="sm" colorScheme="pink" value="pink.400">
                           桃色
                         </Radio>
-                        <Radio size="sm" colorScheme="gray" value="8">
+                        <Radio size="sm" colorScheme="gray" value="gray.400">
                           鼠色
                         </Radio>
                       </HStack>
