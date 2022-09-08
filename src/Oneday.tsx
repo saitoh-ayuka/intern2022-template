@@ -24,7 +24,7 @@ import {
 } from "@chakra-ui/react";
 import FocusLock from "react-focus-lock";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ViewDays } from "./ViewDays";
 import { MdTitle } from "react-icons/md";
 import { BsChatText } from "react-icons/bs";
@@ -83,9 +83,15 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   } = useDisclosure();
 
   const {
-    onOpen: onOpenColorChoisePopover,
-    onClose: onCloseColorChoisePopover,
-    isOpen: isOpenColorChoisePopover,
+    onOpen: onOpenColorChoisePopoverMake,
+    onClose: onCloseColorChoisePopoverMake,
+    isOpen: isOpenColorChoisePopoverMake,
+  } = useDisclosure();
+
+  const {
+    onOpen: onOpenColorChoisePopoverEdit,
+    onClose: onCloseColorChoisePopoverEdit,
+    isOpen: isOpenColorChoisePopoverEdit,
   } = useDisclosure();
 
   const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(false);
@@ -192,6 +198,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     onOpenEditPopover();
     onCloseDetailPopover();
 
+    console.log("Edit start!", isOpenColorChoisePopoverMake);
+
     setTytleInput(props.scheduleList[planNumber].title);
     setDateInput(props.scheduleList[planNumber].date);
     setBeforeTimeInput(props.scheduleList[planNumber].beforeTime);
@@ -237,6 +245,10 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     setAfterTimeInput(null);
     setIsOpenAlldaySwitch((prev) => !prev);
   };
+
+  useEffect(() => {
+    console.log(isOpenColorChoisePopoverMake);
+  }, [isOpenColorChoisePopoverMake]);
 
   return (
     <Box
@@ -397,7 +409,11 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         isOpen={isOpenEditPopover}
         onClose={onCloseAndEditEndPopover}
         placement="right"
-        closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
+        closeOnBlur={
+          !(TitleInput === "") &&
+          !(DateInput === "") &&
+          !isOpenColorChoisePopoverMake
+        }
       >
         <PopoverTrigger>
           <Box></Box>
@@ -409,7 +425,73 @@ export const Oneday: React.FC<Props> = (props: Props) => {
               <HStack>
                 <Text>予定の編集</Text>
                 <Spacer />
-
+                {/* 予定色選択ポップオーバー */}
+                <Popover
+                  isOpen={isOpenColorChoisePopoverEdit}
+                  onClose={() => {
+                    console.log("予定の編集 - " + TitleInput);
+                    onCloseColorChoisePopoverEdit();
+                  }}
+                  placement="right"
+                >
+                  <PopoverTrigger>
+                    <Box onClick={onOpenColorChoisePopoverEdit}>
+                      <IoIosColorFill />
+                    </Box>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>予定色の選択</PopoverHeader>
+                    <RadioGroup
+                      onChange={(ColorNumber) => setColorName(ColorNumber)}
+                      defaultValue="green.400"
+                    >
+                      <HStack>
+                        <Text> </Text>
+                        <Radio size="sm" colorScheme="red" value="red.400">
+                          赤色
+                        </Radio>
+                        <Radio size="sm" colorScheme="blue" value="blue.400">
+                          青色
+                        </Radio>
+                        <Radio
+                          size="sm"
+                          colorScheme="yellow"
+                          value="yellow.400"
+                        >
+                          黄色
+                        </Radio>
+                        <Radio size="sm" colorScheme="green" value="green.400">
+                          緑色
+                        </Radio>
+                      </HStack>
+                      <HStack>
+                        <Text> </Text>
+                        <Radio
+                          size="sm"
+                          colorScheme="orange"
+                          value="orange.400"
+                        >
+                          橙色
+                        </Radio>
+                        <Radio
+                          size="sm"
+                          colorScheme="purple"
+                          value="purple.400"
+                        >
+                          紫色
+                        </Radio>
+                        <Radio size="sm" colorScheme="pink" value="pink.400">
+                          桃色
+                        </Radio>
+                        <Radio size="sm" colorScheme="gray" value="gray.400">
+                          鼠色
+                        </Radio>
+                      </HStack>
+                    </RadioGroup>
+                  </PopoverContent>
+                </Popover>
                 <RiSave3Line onClick={onCloseAndEditEndPopover} />
                 <GoTrashcan onClick={handleChangeDeletePlan} />
                 <PopoverCloseButton />
@@ -513,12 +595,12 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                 <Spacer />
                 {/* 予定色選択ポップオーバー */}
                 <Popover
-                  isOpen={isOpenColorChoisePopover}
-                  onClose={onCloseColorChoisePopover}
+                  isOpen={isOpenColorChoisePopoverMake}
+                  onClose={onCloseColorChoisePopoverMake}
                   placement="right"
                 >
                   <PopoverTrigger>
-                    <Box onClick={onOpenColorChoisePopover}>
+                    <Box onClick={onOpenColorChoisePopoverMake}>
                       <IoIosColorFill />
                     </Box>
                   </PopoverTrigger>
