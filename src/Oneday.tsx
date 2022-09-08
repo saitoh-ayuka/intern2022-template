@@ -13,8 +13,6 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
-  Radio,
-  RadioGroup,
   Spacer,
   Switch,
   Text,
@@ -33,11 +31,13 @@ import { GoTrashcan } from "react-icons/go";
 import { BiEditAlt } from "react-icons/bi";
 import { IoMdTime } from "react-icons/io";
 import { RiSave3Line } from "react-icons/ri";
-import { IoIosColorFill } from "react-icons/io";
 
 import { IconContext } from "react-icons";
 import type { Holidays } from "./App";
 import type { addSchedule, Schedule } from "./@types/Schedule";
+import { ColorChoicePopover } from "./ColorPopover";
+import { PlanMakePopover } from "./PlanMakePopover";
+import { HolidayPopover } from "./HolidayPopover";
 
 type Props = {
   nowYear: number;
@@ -82,26 +82,13 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     isOpen: isOpenHolidayPopover,
   } = useDisclosure();
 
-  const {
-    onOpen: onOpenColorChoisePopoverMake,
-    onClose: onCloseColorChoisePopoverMake,
-    isOpen: isOpenColorChoisePopoverMake,
-  } = useDisclosure();
-
-  const {
-    onOpen: onOpenColorChoisePopoverEdit,
-    onClose: onCloseColorChoisePopoverEdit,
-    isOpen: isOpenColorChoisePopoverEdit,
-  } = useDisclosure();
-
-  const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(false);
-
   const [TitleInput, setTytleInput] = useState<string>("");
   const [MemoInput, setMemoInput] = useState<string | null>("");
   const [DateInput, setDateInput] = useState<string>("");
   const [BeforeTimeInput, setBeforeTimeInput] = useState<string | null>("");
   const [AfterTimeInput, setAfterTimeInput] = useState<string | null>("");
   const [planNumber, setPlanNumber] = useState<number>(0);
+  const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(false);
   const [ColorName, setColorName] = useState("green.400");
 
   const handleInputChangeDynamic = (
@@ -160,15 +147,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     event.stopPropagation();
   };
 
-  const handleChangeInitHoliday = (
-    event: React.MouseEvent<HTMLDivElement>,
-    index: number
-  ) => {
-    setPlanNumber(index);
-    onOpenHolidayPopover();
-    event.stopPropagation();
-  };
-
   const handleChangeDeletePlan = () => {
     if (window.confirm("本当に削除してもよろしいでしょうか？")) {
       props.removeSchedule(props.scheduleList[planNumber].id);
@@ -179,26 +157,9 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const onCloseAndMakePlanPopover = () => {
-    if (TitleInput) {
-      props.addSchedule({
-        title: TitleInput,
-        date: DateInput,
-        beforeTime: BeforeTimeInput,
-        afterTime: AfterTimeInput,
-        memo: MemoInput,
-        allday: isOpenAlldaySwitch,
-        color: ColorName,
-      });
-    }
-    onCloseTitleInputPopover();
-  };
-
   const onCloseAndEditPlanPopover = () => {
     onOpenEditPopover();
     onCloseDetailPopover();
-
-    console.log("Edit start!", isOpenColorChoisePopoverMake);
 
     setTytleInput(props.scheduleList[planNumber].title);
     setDateInput(props.scheduleList[planNumber].date);
@@ -246,10 +207,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     setIsOpenAlldaySwitch((prev) => !prev);
   };
 
-  useEffect(() => {
-    console.log(isOpenColorChoisePopoverMake);
-  }, [isOpenColorChoisePopoverMake]);
-
   return (
     <Box
       h="100%"
@@ -266,64 +223,12 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         holidayList={props.holidayList}
       />
       {/* 祝日ポップオーバー */}
-      <Popover
-        isOpen={isOpenHolidayPopover}
-        onClose={onCloseHolidayPopover}
-        placement="right"
-      >
-        <PopoverTrigger>
-          <Box>
-            {/*祝日を表示*/}
-            {props.holidayList.length >= 1 && (
-              <>
-                {props.holidayList.map((holidayList, index) => (
-                  <Box
-                    key={index}
-                    bg="green.400"
-                    color="white"
-                    onClick={(event) => handleChangeInitHoliday(event, index)}
-                  >
-                    {holidayList.title}
-                  </Box>
-                ))}
-              </>
-            )}
-          </Box>
-        </PopoverTrigger>
-        <PopoverContent p={5}>
-          <FocusLock returnFocus persistentFocus={false}>
-            <PopoverArrow />
-            <PopoverHeader fontWeight="semibold">
-              <HStack>
-                <Text>予定の詳細</Text>
-                <Spacer />
-                <PopoverCloseButton />
-              </HStack>
-            </PopoverHeader>
-            <VStack spacing={4} align="flex-start">
-              <IconContext.Provider value={{ size: "30px" }}>
-                <Text> </Text>
-                {props.holidayList.length && (
-                  <>
-                    <HStack>
-                      <MdTitle />
-                      <Text>{props.holidayList[planNumber].title}</Text>
-                    </HStack>
-                    <HStack>
-                      <FaRegCalendarCheck />
-                      <Text>{props.holidayList[planNumber].date}</Text>
-                    </HStack>
-                    <HStack>
-                      <IoMdTime />
-                      <Text>終日</Text>
-                    </HStack>
-                  </>
-                )}
-              </IconContext.Provider>
-            </VStack>
-          </FocusLock>
-        </PopoverContent>
-      </Popover>
+      <HolidayPopover
+        holidayList={props.holidayList}
+        onOpenHolidayPopover={onOpenHolidayPopover}
+        onCloseHolidayPopover={onCloseHolidayPopover}
+        isOpenHolidayPopover={isOpenHolidayPopover}
+      ></HolidayPopover>
       {/* 予定詳細ポップオーバー */}
       <Popover
         isOpen={isOpenDetailPopover}
@@ -409,11 +314,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
         isOpen={isOpenEditPopover}
         onClose={onCloseAndEditEndPopover}
         placement="right"
-        closeOnBlur={
-          !(TitleInput === "") &&
-          !(DateInput === "") &&
-          !isOpenColorChoisePopoverMake
-        }
+        closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
       >
         <PopoverTrigger>
           <Box></Box>
@@ -426,72 +327,9 @@ export const Oneday: React.FC<Props> = (props: Props) => {
                 <Text>予定の編集</Text>
                 <Spacer />
                 {/* 予定色選択ポップオーバー */}
-                <Popover
-                  isOpen={isOpenColorChoisePopoverEdit}
-                  onClose={() => {
-                    console.log("予定の編集 - " + TitleInput);
-                    onCloseColorChoisePopoverEdit();
-                  }}
-                  placement="right"
-                >
-                  <PopoverTrigger>
-                    <Box onClick={onOpenColorChoisePopoverEdit}>
-                      <IoIosColorFill />
-                    </Box>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>予定色の選択</PopoverHeader>
-                    <RadioGroup
-                      onChange={(ColorNumber) => setColorName(ColorNumber)}
-                      defaultValue="green.400"
-                    >
-                      <HStack>
-                        <Text> </Text>
-                        <Radio size="sm" colorScheme="red" value="red.400">
-                          赤色
-                        </Radio>
-                        <Radio size="sm" colorScheme="blue" value="blue.400">
-                          青色
-                        </Radio>
-                        <Radio
-                          size="sm"
-                          colorScheme="yellow"
-                          value="yellow.400"
-                        >
-                          黄色
-                        </Radio>
-                        <Radio size="sm" colorScheme="green" value="green.400">
-                          緑色
-                        </Radio>
-                      </HStack>
-                      <HStack>
-                        <Text> </Text>
-                        <Radio
-                          size="sm"
-                          colorScheme="orange"
-                          value="orange.400"
-                        >
-                          橙色
-                        </Radio>
-                        <Radio
-                          size="sm"
-                          colorScheme="purple"
-                          value="purple.400"
-                        >
-                          紫色
-                        </Radio>
-                        <Radio size="sm" colorScheme="pink" value="pink.400">
-                          桃色
-                        </Radio>
-                        <Radio size="sm" colorScheme="gray" value="gray.400">
-                          鼠色
-                        </Radio>
-                      </HStack>
-                    </RadioGroup>
-                  </PopoverContent>
-                </Popover>
+                <ColorChoicePopover
+                  setColorName={setColorName}
+                ></ColorChoicePopover>
                 <RiSave3Line onClick={onCloseAndEditEndPopover} />
                 <GoTrashcan onClick={handleChangeDeletePlan} />
                 <PopoverCloseButton />
@@ -563,165 +401,15 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       </Popover>
 
       {/* 予定作成ポップオーバー */}
-      <Popover
-        isOpen={isOpenTitleInputPopover}
-        onClose={onCloseAndMakePlanPopover}
-        placement="right"
-        closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
-      >
-        <PopoverTrigger>
-          <Box>
-            {isViewOnlyTitleInputPopover && (
-              <Box
-                bg={
-                  ColorName.slice(0, -3) +
-                  (ColorName != "red.400" && ColorName != "gray.400"
-                    ? "200"
-                    : "400")
-                }
-                color={ColorName != "yellow.400" ? "white" : "black"}
-              >
-                {TitleInput === "" ? "新規作成..." : TitleInput}
-              </Box>
-            )}
-          </Box>
-        </PopoverTrigger>
-        <PopoverContent p={5}>
-          <FocusLock returnFocus persistentFocus={false}>
-            <PopoverArrow />
-            <PopoverHeader fontWeight="semibold">
-              <HStack>
-                <Text>予定の作成</Text>
-                <Spacer />
-                {/* 予定色選択ポップオーバー */}
-                <Popover
-                  isOpen={isOpenColorChoisePopoverMake}
-                  onClose={onCloseColorChoisePopoverMake}
-                  placement="right"
-                >
-                  <PopoverTrigger>
-                    <Box onClick={onOpenColorChoisePopoverMake}>
-                      <IoIosColorFill />
-                    </Box>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>予定色の選択</PopoverHeader>
-                    <RadioGroup
-                      onChange={(ColorNumber) => setColorName(ColorNumber)}
-                      defaultValue="green.400"
-                    >
-                      <HStack>
-                        <Text> </Text>
-                        <Radio size="sm" colorScheme="red" value="red.400">
-                          赤色
-                        </Radio>
-                        <Radio size="sm" colorScheme="blue" value="blue.400">
-                          青色
-                        </Radio>
-                        <Radio
-                          size="sm"
-                          colorScheme="yellow"
-                          value="yellow.400"
-                        >
-                          黄色
-                        </Radio>
-                        <Radio size="sm" colorScheme="green" value="green.400">
-                          緑色
-                        </Radio>
-                      </HStack>
-                      <HStack>
-                        <Text> </Text>
-                        <Radio
-                          size="sm"
-                          colorScheme="orange"
-                          value="orange.400"
-                        >
-                          橙色
-                        </Radio>
-                        <Radio
-                          size="sm"
-                          colorScheme="purple"
-                          value="purple.400"
-                        >
-                          紫色
-                        </Radio>
-                        <Radio size="sm" colorScheme="pink" value="pink.400">
-                          桃色
-                        </Radio>
-                        <Radio size="sm" colorScheme="gray" value="gray.400">
-                          鼠色
-                        </Radio>
-                      </HStack>
-                    </RadioGroup>
-                  </PopoverContent>
-                </Popover>
-                <PopoverCloseButton />
-              </HStack>
-            </PopoverHeader>
-            <VStack spacing={4}>
-              <FormControl isInvalid={TitleInput === ""}>
-                <Input
-                  value={TitleInput ?? ""}
-                  placeholder="タイトルを入力"
-                  onChange={handleInputChangeDynamic}
-                />
-                {!(TitleInput === "") ? (
-                  <FormHelperText></FormHelperText>
-                ) : (
-                  <FormErrorMessage>
-                    タイトルを入力して下さい。（10文字以内）
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl isInvalid={DateInput === ""}>
-                <Input
-                  size="md"
-                  type="date"
-                  value={DateInput}
-                  onChange={handleDateChangeDynamic}
-                />
-                {!(DateInput === "") ? (
-                  <FormHelperText></FormHelperText>
-                ) : (
-                  <FormErrorMessage>日付を指定して下さい。</FormErrorMessage>
-                )}
-              </FormControl>
-              <HStack>
-                <Input
-                  size="md"
-                  type="time"
-                  value={BeforeTimeInput ?? ""}
-                  onChange={handleBeforeTimeChangeDynamic}
-                />
-                <Text>~</Text>
-                <Input
-                  size="md"
-                  type="time"
-                  value={AfterTimeInput ?? ""}
-                  onChange={handleAfterTimeChangeDynamic}
-                />
-              </HStack>
-              <HStack>
-                <FormControl display="flex" alignItems="center">
-                  <FormLabel mb="0">終日にしますか？</FormLabel>
-                  <Switch
-                    isChecked={isOpenAlldaySwitch}
-                    onChange={onAlldaySwitch}
-                  />
-                </FormControl>
-              </HStack>
-              <Textarea
-                id="memo"
-                placeholder="memo"
-                value={MemoInput ?? ""}
-                onChange={handleMemoChangeDynamic}
-              />
-            </VStack>
-          </FocusLock>
-        </PopoverContent>
-      </Popover>
+      <PlanMakePopover
+        nowMonth={props.nowMonth}
+        nowYear={props.nowYear}
+        oneday={props.oneday}
+        addSchedule={props.addSchedule}
+        isViewOnlyTitleInputPopover={isViewOnlyTitleInputPopover}
+        onCloseTitleInputPopover={onCloseTitleInputPopover}
+        isOpenTitleInputPopover={isOpenTitleInputPopover}
+      ></PlanMakePopover>
     </Box>
   );
 };
