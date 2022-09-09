@@ -8,7 +8,7 @@ import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { SiSpring } from "react-icons/si";
 import { BsSun, BsSnow2 } from "react-icons/bs";
 import { GiMapleLeaf } from "react-icons/gi";
-import { RiLogoutBoxRLine } from "react-icons/ri";
+import { RiLogoutBoxRLine, RiLoginBoxLine } from "react-icons/ri";
 import type React from "react";
 import { MakeMonth } from "./MakeMonth";
 import type { addSchedule, Schedule, ScheduleTable } from "./@types/Schedule";
@@ -133,9 +133,12 @@ const App: React.FC = () => {
   }, []);
 
   const signInWithGoogle = async () => {
-    const { user, session, error } = await supabase.auth.signIn({
-      provider: "google",
-    });
+    if (supabase.auth.user() == null) {
+      const { user, session, error } = await supabase.auth.signIn({
+        provider: "google",
+      });
+      console.log({ user, session, error });
+    }
   };
 
   const signOut = async () => {
@@ -143,7 +146,7 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    void signInWithGoogle();
+    // void signInWithGoogle();
     void setScheduleFromDB();
   }, []);
 
@@ -159,6 +162,19 @@ const App: React.FC = () => {
         }}
       >
         <Box>
+          <HStack>
+            <Spacer />
+            <IconContext.Provider value={{ size: "30px" }}>
+              <Box onClick={signInWithGoogle}>
+                ログイン
+                <RiLoginBoxLine />
+              </Box>
+              <Box onClick={signOut}>
+                ログアウト
+                <RiLogoutBoxRLine />
+              </Box>
+            </IconContext.Provider>
+          </HStack>
           <HStack>
             <IconContext.Provider value={{ color: "4db56a", size: "50px" }}>
               <GoCalendar />
@@ -250,9 +266,6 @@ const App: React.FC = () => {
           </TableContainer>
         </Box>
       </Center>
-      <Box onClick={signOut}>
-        <RiLogoutBoxRLine />
-      </Box>
     </>
   );
 };
