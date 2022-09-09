@@ -133,10 +133,13 @@ const App: React.FC = () => {
   }, []);
 
   const signInWithGoogle = async () => {
-    const { user, session, error } = await supabase.auth.signIn({
-      provider: "google",
-    });
-    alert("サインインしました");
+    if (supabase.auth.user() == null) {
+      const { user, session, error } = await supabase.auth.signIn({
+        provider: "google",
+      });
+      console.log({ user, session, error });
+      alert("サインインしました");
+    }
   };
 
   const signOut = async () => {
@@ -145,7 +148,7 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    if (supabase.auth.user() == null) void signInWithGoogle();
+    // void signInWithGoogle();
     void setScheduleFromDB();
   }, []);
 
