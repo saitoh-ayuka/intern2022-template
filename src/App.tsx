@@ -138,7 +138,7 @@ const App: React.FC = () => {
         provider: "google",
       });
       alert("ログインしました");
-      setUserName("userName is", supabase.auth.user());
+      setUserName(supabase.auth.user());
     }
   };
 
@@ -151,7 +151,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     void setScheduleFromDB();
-    console.log(UserName);
+    console.log("userName is", UserName);
   }, [UserName]);
 
   return (
