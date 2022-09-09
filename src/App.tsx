@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Center } from "@chakra-ui/react";
+import { Button, Center } from "@chakra-ui/react";
 import { Table, Thead, Tr, Th, TableContainer } from "@chakra-ui/react";
 import { Spacer, HStack, Box, Text } from "@chakra-ui/react";
 import { IconContext } from "react-icons";
@@ -12,6 +12,7 @@ import { RiLogoutBoxRLine, RiLoginBoxLine } from "react-icons/ri";
 import type React from "react";
 import { MakeMonth } from "./MakeMonth";
 import type { addSchedule, Schedule, ScheduleTable } from "./@types/Schedule";
+import { User } from "@supabase/supabase-js";
 import { supabase } from "./Datebase";
 
 export type Holidays = {
@@ -132,27 +133,31 @@ const App: React.FC = () => {
     req.send(null); // 実際にサーバーへリクエストを送信
   }, []);
 
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const user = supabase.auth.user();
+    setUser(user);
+  }, [user]);
+
   const signInWithGoogle = async () => {
     if (supabase.auth.user() == null) {
       const { user, session, error } = await supabase.auth.signIn({
         provider: "google",
       });
       alert("ログインしました");
-      setUserName(supabase.auth.user());
     }
   };
 
-  const [UserName, setUserName] = useState<object | null>(null);
-
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    setUser(null);
     alert("ログアウトしました");
   };
 
   useEffect(() => {
     void setScheduleFromDB();
-    console.log("userName is", UserName);
-  }, [UserName]);
+  }, []);
 
   return (
     <>
@@ -169,17 +174,36 @@ const App: React.FC = () => {
           <HStack>
             <Spacer />
             <IconContext.Provider value={{ size: "30px" }}>
-              {/* {{supabase.auth.user() != null && (
-                 <Text></Text>
-              )}} */}
-              <Box onClick={signInWithGoogle}>
+              {user ? (
+                <div>
+                  <h3>id:{user.id}</h3>
+                  <Button
+                    style={{ width: "300px" }}
+                    onClick={() => signOut()}
+                    size={"large"}
+                  >
+                    SignOut
+                  </Button>
+                </div>
+              ) : (
+                <div>
+                  <Button
+                    style={{ width: "300px" }}
+                    onClick={() => signInWithGoogle()}
+                    size={"large"}
+                  >
+                    SignUp
+                  </Button>
+                </div>
+              )}
+              {/* <Box onClick={signInWithGoogle}>
                 ログイン
                 <RiLoginBoxLine />
               </Box>
               <Box onClick={signOut}>
                 ログアウト
                 <RiLogoutBoxRLine />
-              </Box>
+              </Box> */}
             </IconContext.Provider>
           </HStack>
           <HStack>
