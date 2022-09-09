@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import FocusLock from "react-focus-lock";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GoTrashcan } from "react-icons/go";
 import { RiSave3Line } from "react-icons/ri";
 import { ColorChoicePopover } from "./ColorPopover";
@@ -32,7 +32,7 @@ type Props = {
   oneday: number;
 
   schedule: Schedule;
-  handleRemoveSch: (oldScheduleId: number) => void;
+  handleChangeDeletePlan: () => void;
   rewriteSchedule: (newSchedule: Schedule, oldScheduleId: number) => void;
 
   handleChangeInitInput: () => void;
@@ -94,15 +94,6 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
     setIsOpenAlldaySwitch((prev) => !prev);
   };
 
-  const handleChangeDeletePlan = () => {
-    if (window.confirm("本当に削除してもよろしいでしょうか？")) {
-      props.handleRemoveSch(props.schedule.id);
-      props.onCloseDetailPopover();
-      props.onCloseEditPopover();
-      setIsOpenAlldaySwitch(false);
-    }
-  };
-
   const onCloseAndEditEndPopover = () => {
     props.rewriteSchedule(
       {
@@ -122,10 +113,6 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
     props.onCloseEditPopover();
     props.onCloseTitleInputPopover();
   };
-
-  useEffect(() => {
-    console.log("TitleInput is", TitleInput);
-  }, [TitleInput]);
 
   return (
     <Popover
@@ -149,7 +136,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
                 setColorName={setColorName}
               ></ColorChoicePopover>
               <RiSave3Line onClick={onCloseAndEditEndPopover} />
-              <GoTrashcan onClick={handleChangeDeletePlan} />
+              <GoTrashcan onClick={props.handleChangeDeletePlan} />
               <PopoverCloseButton />
             </HStack>
           </PopoverHeader>
