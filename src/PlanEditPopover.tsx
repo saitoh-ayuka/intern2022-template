@@ -1,52 +1,64 @@
 import {
   Box,
-  Text,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
-  HStack,
   FormControl,
   FormErrorMessage,
   FormHelperText,
   FormLabel,
+  HStack,
   Input,
+  Popover,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Spacer,
   Switch,
   Textarea,
   VStack,
+  Text,
 } from "@chakra-ui/react";
 import FocusLock from "react-focus-lock";
 import type React from "react";
-import { useState } from "react";
-import type { addSchedule } from "./@types/Schedule";
+import { useEffect, useState } from "react";
+import { GoTrashcan } from "react-icons/go";
+import { RiSave3Line } from "react-icons/ri";
 import { ColorChoicePopover } from "./ColorPopover";
+import type { Schedule } from "./@types/Schedule";
 
 type Props = {
   nowYear: number;
   nowMonth: number;
   oneday: number;
 
-  addSchedule: (Schedule: addSchedule) => void;
-  isViewOnlyTitleInputPopover: boolean;
+  schedule: Schedule;
+  handleRemoveSch: (oldScheduleId: number) => void;
+  rewriteSchedule: (newSchedule: Schedule, oldScheduleId: number) => void;
+
+  handleChangeInitInput: () => void;
   onCloseTitleInputPopover: () => void;
-  isOpenTitleInputPopover: boolean;
+  onCloseDetailPopover: () => void;
+
+  onCloseEditPopover: () => void;
+  isOpenEditPopover: boolean;
 };
 
-export const PlanMakePopover: React.FC<Props> = (props: Props) => {
-  const [TitleInput, setTytleInput] = useState<string>("");
-  const [DateInput, setDateInput] = useState<string>(() => {
-    const month = ("00" + (props.nowMonth + 1).toString()).slice(-2);
-    const date = ("00" + props.oneday.toString()).slice(-2);
-    return props.nowYear.toString() + "-" + month + "-" + date;
-  });
-  const [BeforeTimeInput, setBeforeTimeInput] = useState<string | null>(null);
-  const [AfterTimeInput, setAfterTimeInput] = useState<string | null>(null);
-  const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(false);
-  const [MemoInput, setMemoInput] = useState<string | null>(null);
-  const [ColorName, setColorName] = useState("green.400");
+export const PlanEditPopover: React.FC<Props> = (props: Props) => {
+  const [TitleInput, setTytleInput] = useState<string>(props.schedule.title);
+  const [DateInput, setDateInput] = useState<string>(props.schedule.date);
+  const [BeforeTimeInput, setBeforeTimeInput] = useState<string | null>(
+    props.schedule.beforeTime
+  );
+  const [AfterTimeInput, setAfterTimeInput] = useState<string | null>(
+    props.schedule.afterTime
+  );
+  const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(
+    props.schedule.allday
+  );
+  const [MemoInput, setMemoInput] = useState<string | null>(
+    props.schedule.memo
+  );
+  const [ColorName, setColorName] = useState(props.schedule.color);
 
   const handleInputChangeDynamic = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -82,75 +94,69 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
     setIsOpenAlldaySwitch((prev) => !prev);
   };
 
-  const onCloseAndMakePlanPopover = () => {
-    if (TitleInput) {
-      props.addSchedule({
+  const handleChangeDeletePlan = () => {
+    if (window.confirm("本当に削除してもよろしいでしょうか？")) {
+      props.handleRemoveSch(props.schedule.id);
+      props.onCloseDetailPopover();
+      props.onCloseEditPopover();
+      setIsOpenAlldaySwitch(false);
+    }
+  };
+
+  const onCloseAndEditEndPopover = () => {
+    props.rewriteSchedule(
+      {
         title: TitleInput,
         date: DateInput,
-        beforeTime: BeforeTimeInput,
-        afterTime: AfterTimeInput,
+        beforeTime: BeforeTimeInput != "" ? BeforeTimeInput : null,
+        afterTime: AfterTimeInput != "" ? AfterTimeInput : null,
         memo: MemoInput,
         allday: isOpenAlldaySwitch,
         color: ColorName,
-      });
-    }
-    props.onCloseTitleInputPopover();
+        id: props.schedule.id,
+      },
+      props.schedule.id
+    );
 
-    setTytleInput("");
-    setDateInput(() => {
-      const month = ("00" + (props.nowMonth + 1).toString()).slice(-2);
-      const date = ("00" + props.oneday.toString()).slice(-2);
-      return props.nowYear.toString() + "-" + month + "-" + date;
-    });
-    setBeforeTimeInput(null);
-    setAfterTimeInput(null);
-    setMemoInput(null);
-    setIsOpenAlldaySwitch(false);
-    setColorName("green.400");
+    props.handleChangeInitInput();
+    props.onCloseEditPopover();
+    props.onCloseTitleInputPopover();
   };
+
+  useEffect(() => {
+    console.log("TitleInput is", TitleInput);
+  }, [TitleInput]);
 
   return (
     <Popover
-      isOpen={props.isOpenTitleInputPopover}
-      onClose={onCloseAndMakePlanPopover}
+      isOpen={props.isOpenEditPopover}
+      onClose={onCloseAndEditEndPopover}
       placement="right"
       closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
     >
       <PopoverTrigger>
-        <Box>
-          {props.isViewOnlyTitleInputPopover && (
-            <Box
-              bg={
-                ColorName.slice(0, -3) +
-                (ColorName != "red.400" && ColorName != "gray.400"
-                  ? "200"
-                  : "400")
-              }
-              color={ColorName != "yellow.400" ? "white" : "black"}
-            >
-              {TitleInput === "" ? "新規作成..." : TitleInput}
-            </Box>
-          )}
-        </Box>
+        <Box></Box>
       </PopoverTrigger>
       <PopoverContent p={5}>
         <FocusLock returnFocus persistentFocus={false}>
           <PopoverArrow />
           <PopoverHeader fontWeight="semibold">
             <HStack>
-              <Text>予定の作成</Text>
+              <Text>予定の編集</Text>
               <Spacer />
               {/* 予定色選択ポップオーバー */}
               <ColorChoicePopover
                 setColorName={setColorName}
               ></ColorChoicePopover>
+              <RiSave3Line onClick={onCloseAndEditEndPopover} />
+              <GoTrashcan onClick={handleChangeDeletePlan} />
               <PopoverCloseButton />
             </HStack>
           </PopoverHeader>
           <VStack spacing={4}>
             <FormControl isInvalid={TitleInput === ""}>
               <Input
-                value={TitleInput ?? ""}
+                value={TitleInput}
                 placeholder="タイトルを入力"
                 onChange={handleInputChangeDynamic}
               />
@@ -181,6 +187,7 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
                 type="time"
                 value={BeforeTimeInput ?? ""}
                 onChange={handleBeforeTimeChangeDynamic}
+                readOnly={isOpenAlldaySwitch}
               />
               <Text>~</Text>
               <Input
@@ -188,6 +195,7 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
                 type="time"
                 value={AfterTimeInput ?? ""}
                 onChange={handleAfterTimeChangeDynamic}
+                readOnly={isOpenAlldaySwitch}
               />
             </HStack>
             <HStack>
