@@ -137,8 +137,9 @@ const App: React.FC = () => {
       const { user, session, error } = await supabase.auth.signIn({
         provider: "google",
       });
+      console.log(user, session, error, supabase.auth.user());
+
       alert("ログインしました");
-      console.log(user);
     }
   };
 
