@@ -137,18 +137,17 @@ const App: React.FC = () => {
       const { user, session, error } = await supabase.auth.signIn({
         provider: "google",
       });
-      console.log({ user, session, error });
-      alert("サインインしました");
+      alert("ログインしました");
+      console.log(supabase.auth.user());
     }
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    alert("サインアウトしました");
+    alert("ログアウトしました");
   };
 
   useEffect(() => {
-    // void signInWithGoogle();
     void setScheduleFromDB();
   }, []);
 
@@ -167,6 +166,9 @@ const App: React.FC = () => {
           <HStack>
             <Spacer />
             <IconContext.Provider value={{ size: "30px" }}>
+              {/* {supabase.auth.user() != null && (
+                // <Text>{supabase.auth.user() ?? ""}</Text>
+              )} */}
               <Box onClick={signInWithGoogle}>
                 ログイン
                 <RiLoginBoxLine />
