@@ -196,14 +196,6 @@ const App: React.FC = () => {
                   </Button>
                 </div>
               )}
-              {/* <Box onClick={signInWithGoogle}>
-                ログイン
-                <RiLoginBoxLine />
-              </Box>
-              <Box onClick={signOut}>
-                ログアウト
-                <RiLogoutBoxRLine />
-              </Box> */}
             </IconContext.Provider>
           </HStack>
           <HStack>
