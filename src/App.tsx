@@ -138,7 +138,7 @@ const App: React.FC = () => {
         provider: "google",
       });
       alert("ログインしました");
-      console.log(supabase.auth.user());
+      console.log(user);
     }
   };
 
