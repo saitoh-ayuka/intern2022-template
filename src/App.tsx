@@ -138,6 +138,10 @@ const App: React.FC = () => {
     });
   };
 
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+  };
+
   useEffect(() => {
     void signInWithGoogle();
     void setScheduleFromDB();
@@ -246,7 +250,9 @@ const App: React.FC = () => {
           </TableContainer>
         </Box>
       </Center>
-      <RiLogoutBoxRLine />
+      <Box onClick={signOut}>
+        <RiLogoutBoxRLine />
+      </Box>
     </>
   );
 };
