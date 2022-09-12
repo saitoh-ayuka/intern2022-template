@@ -146,6 +146,7 @@ const App: React.FC = () => {
         provider: "google",
       });
       const user = supabase.auth.user();
+      alert("tsts");
       alert(user);
       setUser(user);
       alert("ログインします");
