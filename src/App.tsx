@@ -177,7 +177,7 @@ const App: React.FC = () => {
           <HStack>
             <Spacer />
             <IconContext.Provider value={{ size: "30px" }}>
-              {user != null ? (
+              {user ? (
                 <div>
                   <h3>id:{user.id}</h3>
                   <Button
@@ -190,7 +190,7 @@ const App: React.FC = () => {
                 </div>
               ) : (
                 <div>
-                  <h3>id:{user}</h3>
+                  <h3>id:？{user}</h3>
                   <Button
                     style={{ width: "300px" }}
                     onClick={() => signInWithGoogle()}
