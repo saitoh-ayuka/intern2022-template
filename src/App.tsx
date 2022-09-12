@@ -135,26 +135,20 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const user = supabase.auth.user();
-    setUser(user);
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log("onAuthStateChange");
+      console.log(event, session);
+
+      const user = supabase.auth.user();
+      setUser(user);
+    });
   }, [user]);
 
   const signInWithGoogle = async () => {
     if (user == null) {
-      try {
-        const result = await supabase.auth.signIn({
-          provider: "google",
-        });
-        console.log("sign in error");
-        console.log(result);
-
-        alert("sts");
-        console.log(result.user);
-        setUser(result.user);
-        alert("ログインします");
-      } catch (error) {
-        console.log(error);
-      }
+      const result = await supabase.auth.signIn({
+        provider: "google",
+      });
     }
   };
 
@@ -201,7 +195,7 @@ const App: React.FC = () => {
                   <h3>id:{user}</h3>
                   <Button
                     style={{ width: "300px" }}
-                    onClick={() => signInWithGoogle()}
+                    onClick={signInWithGoogle}
                     size={"large"}
                   >
                     SignUp
