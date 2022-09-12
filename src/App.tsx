@@ -192,7 +192,7 @@ const App: React.FC = () => {
                 </div>
               ) : (
                 <div>
-                  <h3>id:？{user}</h3>
+                  <h3>id:{user}</h3>
                   <Button
                     style={{ width: "300px" }}
                     onClick={() => signInWithGoogle()}
