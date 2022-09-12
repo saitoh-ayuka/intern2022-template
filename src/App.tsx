@@ -150,7 +150,7 @@ const App: React.FC = () => {
         console.log(error);
 
         const user = supabase.auth.user();
-        alert("tst");
+        alert("tsts");
         console.log(user);
         setUser(user);
         alert("ログインします");
