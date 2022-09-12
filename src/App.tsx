@@ -145,6 +145,9 @@ const App: React.FC = () => {
       const { error } = await supabase.auth.signIn({
         provider: "google",
       });
+      console.log("sign in error");
+      console.log(error);
+
       const user = supabase.auth.user();
       alert("tsts");
       console.log(user);
@@ -155,8 +158,9 @@ const App: React.FC = () => {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    setUser(null);
+    console.log("sign out error");
     console.log(error);
+    setUser(null);
     alert("ログアウトしました");
   };
 
