@@ -148,7 +148,7 @@ const App: React.FC = () => {
         console.log("sign in error");
         console.log(error);
 
-        alert("tsts");
+        alert("sts");
         console.log(user);
         setUser(user);
         alert("ログインします");
