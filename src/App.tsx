@@ -227,9 +227,9 @@ const App: React.FC = () => {
               }
               {
                 // 冬のアイコン
-                nowMonth + 1 == 1 ||
+                (nowMonth + 1 == 1 ||
                   nowMonth + 1 == 2 ||
-                  (nowMonth + 1 == 12 && <BsSnow2 color="#63B3ED" />)
+                  nowMonth + 1 == 12) && <BsSnow2 color="#63B3ED" />
               }
               <Text fontSize="xl">
                 {nowYear}年 {nowMonth + 1}月

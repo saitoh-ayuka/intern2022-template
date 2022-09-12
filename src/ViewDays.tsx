@@ -30,17 +30,29 @@ export const ViewDays: React.FC<Props> = (props: Props) => {
           </>
         )}
       {/* 普通の土曜 */}
-      {props.oneday != today.getDate() && oneday.getDay() == 6 && (
-        <>
-          <Text color="#63B3ED">{props.oneday}日</Text>
-        </>
-      )}
+      {!(
+        props.oneday == today.getDate() &&
+        today.getMonth() == props.nowMonth &&
+        today.getFullYear() == props.nowYear
+      ) &&
+        oneday.getDay() == 6 &&
+        holiday == "" && (
+          <>
+            <Text color="#63B3ED">{props.oneday}日</Text>
+          </>
+        )}
       {/* 普通の日曜 */}
-      {props.oneday != today.getDate() && oneday.getDay() == 0 && (
-        <>
-          <Text color="tomato">{props.oneday}日</Text>
-        </>
-      )}
+      {!(
+        props.oneday == today.getDate() &&
+        today.getMonth() == props.nowMonth &&
+        today.getFullYear() == props.nowYear
+      ) &&
+        oneday.getDay() == 0 &&
+        holiday == "" && (
+          <>
+            <Text color="tomato">{props.oneday}日</Text>
+          </>
+        )}
       {/* 普通の祝日 */}
       {holiday != "" && (
         <>
@@ -49,7 +61,11 @@ export const ViewDays: React.FC<Props> = (props: Props) => {
       )}
 
       {/* 普通の日 */}
-      {props.oneday != today.getDate() &&
+      {!(
+        props.oneday == today.getDate() &&
+        today.getMonth() == props.nowMonth &&
+        today.getFullYear() == props.nowYear
+      ) &&
         oneday.getDay() != 6 &&
         oneday.getDay() != 0 &&
         holiday == "" && (
