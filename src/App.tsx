@@ -142,17 +142,21 @@ const App: React.FC = () => {
   const signInWithGoogle = async () => {
     alert(user);
     if (user == null) {
-      const { error } = await supabase.auth.signIn({
-        provider: "google",
-      });
-      console.log("sign in error");
-      console.log(error);
+      try {
+        const { error } = await supabase.auth.signIn({
+          provider: "google",
+        });
+        console.log("sign in error");
+        console.log(error);
 
-      const user = supabase.auth.user();
-      alert("tst");
-      console.log(user);
-      setUser(user);
-      alert("ログインします");
+        const user = supabase.auth.user();
+        alert("tst");
+        console.log(user);
+        setUser(user);
+        alert("ログインします");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
