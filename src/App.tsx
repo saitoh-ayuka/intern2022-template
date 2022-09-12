@@ -134,10 +134,10 @@ const App: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const user = supabase.auth.user();
-    setUser(user);
-  }, [user]);
+  // useEffect(() => {
+  //   const user = supabase.auth.user();
+  //   setUser(user);
+  // }, [user]);
 
   const signInWithGoogle = async () => {
     if (supabase.auth.user() == null) {
