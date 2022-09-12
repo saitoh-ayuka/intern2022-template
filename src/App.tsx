@@ -236,7 +236,7 @@ const App: React.FC = () => {
                   nowMonth + 1 == 12) && <BsSnow2 color="#63B3ED" />
               }
               <Text fontSize="xl">
-                {nowYear}年 {nowMonth + 1}月
+                {nowYear}年 //{nowMonth + 1}月
               </Text>
               <BiChevronRight onClick={handleChevronRightClick} /*次月へ*/ />
             </IconContext.Provider>
