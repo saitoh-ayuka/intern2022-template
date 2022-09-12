@@ -140,16 +140,14 @@ const App: React.FC = () => {
   }, [user]);
 
   const signInWithGoogle = async () => {
-    alert(user);
     if (user == null) {
       try {
-        const { error } = await supabase.auth.signIn({
+        const { user, session, error } = await supabase.auth.signIn({
           provider: "google",
         });
         console.log("sign in error");
         console.log(error);
 
-        const user = supabase.auth.user();
         alert("tsts");
         console.log(user);
         setUser(user);
@@ -187,7 +185,7 @@ const App: React.FC = () => {
           <HStack>
             <Spacer />
             <IconContext.Provider value={{ size: "30px" }}>
-              {user ? (
+              {user != null ? (
                 <div>
                   <h3>id:{user.id}</h3>
                   <Button
