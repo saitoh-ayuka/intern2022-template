@@ -147,7 +147,7 @@ const App: React.FC = () => {
       });
       const user = supabase.auth.user();
       alert("tsts");
-      alert(user);
+      console.log(user);
       setUser(user);
       alert("ログインします");
     }
@@ -156,6 +156,7 @@ const App: React.FC = () => {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     setUser(null);
+    console.log(error);
     alert("ログアウトしました");
   };
 
