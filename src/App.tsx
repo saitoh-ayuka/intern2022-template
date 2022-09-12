@@ -8,11 +8,10 @@ import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { SiSpring } from "react-icons/si";
 import { BsSun, BsSnow2 } from "react-icons/bs";
 import { GiMapleLeaf } from "react-icons/gi";
-import { RiLogoutBoxRLine, RiLoginBoxLine } from "react-icons/ri";
 import type React from "react";
 import { MakeMonth } from "./MakeMonth";
 import type { addSchedule, Schedule, ScheduleTable } from "./@types/Schedule";
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { supabase } from "./Datebase";
 
 export type Holidays = {
