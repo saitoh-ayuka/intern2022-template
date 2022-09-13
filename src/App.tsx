@@ -77,29 +77,29 @@ const App: React.FC = () => {
   };
 
   const addScheduleToDB = async (newSchedule: addSchedule) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from<ScheduleTable>("Schedule") // Message maps to the type of the row in your database.
       .insert(newSchedule);
-    void setScheduleFromDB();
+    if (error == null) void setScheduleFromDB();
   };
 
   const removeScheduleFromDB = async (oldScheduleId: number) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from<ScheduleTable>("Schedule")
       .delete()
       .match({ id: oldScheduleId });
-    void setScheduleFromDB();
+    if (error == null) void setScheduleFromDB();
   };
 
   const rewriteScheduleFromDB = async (
     newSchedule: Schedule,
     oldScheduleId: number
   ) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from<ScheduleTable>("Schedule")
       .update(newSchedule)
       .match({ id: oldScheduleId });
-    void setScheduleFromDB();
+    if (error == null) void setScheduleFromDB();
   };
 
   const [holidayList, setHolidayList] = useState<Holidays[]>([]);
@@ -135,7 +135,7 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange(() => {
       const user = supabase.auth.user();
       setUser(user);
       void setScheduleFromDB();
@@ -144,7 +144,7 @@ const App: React.FC = () => {
 
   const signIn = async () => {
     if (user == null) {
-      const result = await supabase.auth.signIn({
+      await supabase.auth.signIn({
         provider: "google",
       });
     }
@@ -152,7 +152,7 @@ const App: React.FC = () => {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    setUser(null);
+    if (error == null) setUser(null);
   };
 
   useEffect(() => {
