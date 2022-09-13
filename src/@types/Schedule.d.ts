@@ -27,4 +27,5 @@ export type addSchedule = {
   memo: string | null;
   allday: boolean;
   color: string;
+  user_id : User | null;
 };

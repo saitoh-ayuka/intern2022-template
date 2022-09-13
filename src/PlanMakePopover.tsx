@@ -23,6 +23,7 @@ import type React from "react";
 import { useState } from "react";
 import type { addSchedule } from "./@types/Schedule";
 import { ColorChoicePopover } from "./ColorPopover";
+import { supabase } from "./Datebase";
 
 type Props = {
   nowYear: number;
@@ -84,6 +85,8 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
 
   const onCloseAndMakePlanPopover = () => {
     if (TitleInput) {
+      const user = supabase.auth.user();
+      console.log(user);
       props.addSchedule({
         title: TitleInput,
         date: DateInput,
@@ -92,6 +95,7 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
         memo: MemoInput,
         allday: isOpenAlldaySwitch,
         color: ColorName,
+        user_id: user,
       });
     }
     props.onCloseTitleInputPopover();
