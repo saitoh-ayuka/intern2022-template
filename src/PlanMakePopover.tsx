@@ -95,7 +95,7 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
         memo: MemoInput,
         allday: isOpenAlldaySwitch,
         color: ColorName,
-        user_id: user,
+        user_id: user != null ? user.id : null,
       });
     }
     props.onCloseTitleInputPopover();
