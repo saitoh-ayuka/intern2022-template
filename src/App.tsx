@@ -155,7 +155,6 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    void signInWithGoogle();
     void setScheduleFromDB();
   }, []);
 
