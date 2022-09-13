@@ -138,6 +138,7 @@ const App: React.FC = () => {
     supabase.auth.onAuthStateChange((event, session) => {
       const user = supabase.auth.user();
       setUser(user);
+      void setScheduleFromDB();
     });
   }, [user]);
 
