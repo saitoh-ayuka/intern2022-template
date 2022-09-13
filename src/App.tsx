@@ -142,7 +142,7 @@ const App: React.FC = () => {
     });
   }, [user]);
 
-  const signInWithGoogle = async () => {
+  const signIn = async () => {
     if (user == null) {
       const result = await supabase.auth.signIn({
         provider: "google",
@@ -184,12 +184,112 @@ const App: React.FC = () => {
                   >
                     SignOut
                   </Button>
+
+                  <HStack>
+                    <IconContext.Provider
+                      value={{ color: "4db56a", size: "50px" }}
+                    >
+                      <GoCalendar />
+                      <Text fontSize="2xl">カレンダー</Text>
+                    </IconContext.Provider>
+
+                    <Spacer />
+                    <IconContext.Provider value={{ size: "50px" }}>
+                      <BiChevronLeft
+                        onClick={handleChevronLeftClick} /*前月へ*/
+                      />
+                      {
+                        // 春なら、春のアイコン
+                        nowMonth + 1 >= 3 && nowMonth + 1 <= 5 && (
+                          <SiSpring color="pink" />
+                        )
+                      }
+                      {
+                        // 夏のアイコン
+                        nowMonth + 1 >= 6 && nowMonth + 1 <= 8 && (
+                          <BsSun color="tomato" />
+                        )
+                      }
+                      {
+                        // 秋のアイコン
+                        nowMonth + 1 >= 9 && nowMonth + 1 <= 11 && (
+                          <GiMapleLeaf color="brown" />
+                        )
+                      }
+                      {
+                        // 冬のアイコン
+                        (nowMonth + 1 == 1 ||
+                          nowMonth + 1 == 2 ||
+                          nowMonth + 1 == 12) && <BsSnow2 color="#63B3ED" />
+                      }
+                      <Text fontSize="xl">
+                        {nowYear}年 {nowMonth + 1}月
+                      </Text>
+                      <BiChevronRight
+                        onClick={handleChevronRightClick} /*次月へ*/
+                      />
+                    </IconContext.Provider>
+                  </HStack>
+
+                  <TableContainer>
+                    <Table variant="simple" size="lg">
+                      <Thead>
+                        <Tr>
+                          <Th border="1px solid black" px={2} color="tomato">
+                            <Text>日曜日</Text>
+                          </Th>
+
+                          <Th border="1px solid black" px={2}>
+                            <Text>月曜日</Text>
+                          </Th>
+
+                          <Th border="1px solid black" px={2}>
+                            <Text>火曜日</Text>
+                          </Th>
+
+                          <Th border="1px solid black" px={2}>
+                            <Text>水曜日</Text>
+                          </Th>
+
+                          <Th border="1px solid black" px={2}>
+                            <Text>木曜日</Text>
+                          </Th>
+
+                          <Th border="1px solid black" px={2}>
+                            <Text>金曜日</Text>
+                          </Th>
+
+                          <Th border="1px solid black" px={2} color="#63B3ED">
+                            <Text>土曜日</Text>
+                          </Th>
+                        </Tr>
+                      </Thead>
+
+                      <MakeMonth
+                        nowMonth={nowMonth}
+                        nowYear={nowYear}
+                        scheduleList={scheduleList}
+                        addSchedule={addScheduleToDB}
+                        removeSchedule={removeScheduleFromDB}
+                        rewriteSchedule={rewriteScheduleFromDB}
+                        holidayList={holidayList.filter((value) => {
+                          const month = (
+                            "00" + (nowMonth + 1).toString()
+                          ).slice(-2);
+                          const deleted = value.date.slice(0, -2);
+                          return (
+                            deleted === nowYear.toString() + "-" + month + "-"
+                          );
+                        })}
+                      />
+                    </Table>
+                  </TableContainer>
                 </div>
               ) : (
                 <div>
                   <Button
                     style={{ width: "300px" }}
-                    onClick={signInWithGoogle}
+                    onClick={signIn}
                     size={"large"}
                   >
                     SignUp
@@ -198,95 +298,6 @@ const App: React.FC = () => {
               )}
             </IconContext.Provider>
           </HStack>
-          <HStack>
-            <IconContext.Provider value={{ color: "4db56a", size: "50px" }}>
-              <GoCalendar />
-              <Text fontSize="2xl">カレンダー</Text>
-            </IconContext.Provider>
-
-            <Spacer />
-            <IconContext.Provider value={{ size: "50px" }}>
-              <BiChevronLeft onClick={handleChevronLeftClick} /*前月へ*/ />
-              {
-                // 春なら、春のアイコン
-                nowMonth + 1 >= 3 && nowMonth + 1 <= 5 && (
-                  <SiSpring color="pink" />
-                )
-              }
-              {
-                // 夏のアイコン
-                nowMonth + 1 >= 6 && nowMonth + 1 <= 8 && (
-                  <BsSun color="tomato" />
-                )
-              }
-              {
-                // 秋のアイコン
-                nowMonth + 1 >= 9 && nowMonth + 1 <= 11 && (
-                  <GiMapleLeaf color="brown" />
-                )
-              }
-              {
-                // 冬のアイコン
-                (nowMonth + 1 == 1 ||
-                  nowMonth + 1 == 2 ||
-                  nowMonth + 1 == 12) && <BsSnow2 color="#63B3ED" />
-              }
-              <Text fontSize="xl">
-                {nowYear}年 {nowMonth + 1}月
-              </Text>
-              <BiChevronRight onClick={handleChevronRightClick} /*次月へ*/ />
-            </IconContext.Provider>
-          </HStack>
-
-          <TableContainer>
-            <Table variant="simple" size="lg">
-              <Thead>
-                <Tr>
-                  <Th border="1px solid black" px={2} color="tomato">
-                    <Text>日曜日</Text>
-                  </Th>
-
-                  <Th border="1px solid black" px={2}>
-                    <Text>月曜日</Text>
-                  </Th>
-
-                  <Th border="1px solid black" px={2}>
-                    <Text>火曜日</Text>
-                  </Th>
-
-                  <Th border="1px solid black" px={2}>
-                    <Text>水曜日</Text>
-                  </Th>
-
-                  <Th border="1px solid black" px={2}>
-                    <Text>木曜日</Text>
-                  </Th>
-
-                  <Th border="1px solid black" px={2}>
-                    <Text>金曜日</Text>
-                  </Th>
-
-                  <Th border="1px solid black" px={2} color="#63B3ED">
-                    <Text>土曜日</Text>
-                  </Th>
-                </Tr>
-              </Thead>
-
-              <MakeMonth
-                nowMonth={nowMonth}
-                nowYear={nowYear}
-                scheduleList={scheduleList}
-                addSchedule={addScheduleToDB}
-                removeSchedule={removeScheduleFromDB}
-                rewriteSchedule={rewriteScheduleFromDB}
-                holidayList={holidayList.filter((value) => {
-                  const month = ("00" + (nowMonth + 1).toString()).slice(-2);
-                  const deleted = value.date.slice(0, -2);
-                  return deleted === nowYear.toString() + "-" + month + "-";
-                })}
-              />
-            </Table>
-          </TableContainer>
         </Box>
       </Center>
     </>
