@@ -86,7 +86,6 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
   const onCloseAndMakePlanPopover = () => {
     if (TitleInput) {
       const user = supabase.auth.user();
-      console.log(user);
       props.addSchedule({
         title: TitleInput,
         date: DateInput,
