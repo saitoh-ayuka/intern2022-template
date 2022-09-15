@@ -31,13 +31,12 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
   const [colorValue, setColorValue] = useState(props.defaultColor);
 
   const onCloseAndInitPopover = () => {
-    //setColorValue(props.defaultColor);
+    setColorValue(props.defaultColor);
     onCloseColorChoisePopover();
   };
 
   const onOpenAndInitPopover = () => {
-    //setColorValue(props.defaultColor);
-    console.log("default Color is", props.defaultColor);
+    setColorValue(props.defaultColor);
     onOpenColorChoisePopover();
   };
 
