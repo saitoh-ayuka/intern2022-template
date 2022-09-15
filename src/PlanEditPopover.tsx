@@ -95,6 +95,8 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
   };
 
   const onOpenAndInitPopover = () => {
+    console.log("Init");
+
     setTytleInput(props.schedule.title);
     setDateInput(props.schedule.date);
     setBeforeTimeInput(props.schedule.beforeTime);
@@ -154,7 +156,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
           <VStack spacing={4}>
             <FormControl isInvalid={TitleInput === ""}>
               <Input
-                value={TitleInput}
+                // value={TitleInput}
                 placeholder="タイトルを入力"
                 onChange={handleInputChangeDynamic}
               />
