@@ -94,9 +94,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
     setIsOpenAlldaySwitch((prev) => !prev);
   };
 
-  const onOpenAndInitPopover = () => {
-    console.log("Init");
-
+  const onCloseAndInitPopover = () => {
     setTytleInput(props.schedule.title);
     setDateInput(props.schedule.date);
     setBeforeTimeInput(props.schedule.beforeTime);
@@ -104,6 +102,8 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
     setIsOpenAlldaySwitch(props.schedule.allday);
     setMemoInput(props.schedule.memo);
     setColorName(props.schedule.color);
+
+    props.onCloseEditPopover;
   };
 
   const onCloseAndEditEndPopover = () => {
@@ -129,8 +129,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
   return (
     <Popover
       isOpen={props.isOpenEditPopover}
-      onOpen={onOpenAndInitPopover}
-      onClose={props.onCloseEditPopover}
+      onClose={onCloseAndInitPopover}
       placement="right"
       closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
     >
@@ -156,7 +155,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
           <VStack spacing={4}>
             <FormControl isInvalid={TitleInput === ""}>
               <Input
-                // value={TitleInput}
+                value={TitleInput}
                 placeholder="タイトルを入力"
                 onChange={handleInputChangeDynamic}
               />
