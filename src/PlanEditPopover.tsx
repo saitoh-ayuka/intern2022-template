@@ -103,7 +103,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
     setMemoInput(props.schedule.memo);
     setColorName(props.schedule.color);
 
-    props.onCloseEditPopover;
+    props.onCloseEditPopover();
   };
 
   const onCloseAndEditEndPopover = () => {
