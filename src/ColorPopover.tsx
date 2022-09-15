@@ -37,6 +37,7 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
 
   const onOpenAndInitPopover = () => {
     //setColorValue(props.defaultColor);
+    console.log("default Color is", props.defaultColor);
     onOpenColorChoisePopover();
   };
 
@@ -63,7 +64,6 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
         <RadioGroup
           value={colorValue}
           onChange={(ColorName) => handleChange(ColorName)}
-          defaultValue={props.defaultColor}
         >
           <HStack>
             <Text> </Text>
