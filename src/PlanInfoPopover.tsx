@@ -49,8 +49,8 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
   };
 
   useEffect(() => {
+    props.setPlanNumber;
     console.log("after plan number is", props.planNumber);
-    props.setPlanNumber(props.planNumber);
   }, [props, props.planNumber]);
 
   return (
