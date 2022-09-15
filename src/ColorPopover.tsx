@@ -35,6 +35,11 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
     onCloseColorChoisePopover();
   };
 
+  const onOpenAndInitPopover = () => {
+    setColorValue(props.defaultColor);
+    onOpenColorChoisePopover();
+  };
+
   const handleChange = (ColorName: string) => {
     setColorValue(ColorName);
     props.setColorName(ColorName);
@@ -47,7 +52,7 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
       placement="right"
     >
       <PopoverTrigger>
-        <Box onClick={onOpenColorChoisePopover}>
+        <Box onClick={onOpenAndInitPopover}>
           <IoIosColorFill />
         </Box>
       </PopoverTrigger>
