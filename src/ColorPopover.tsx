@@ -28,7 +28,7 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
     isOpen: isOpenColorChoisePopover,
   } = useDisclosure();
 
-  const [colorValue, setColorValue] = useState("green.400");
+  const [colorValue, setColorValue] = useState(props.defaultColor);
 
   const onCloseAndInitPopover = () => {
     setColorValue(props.defaultColor);
