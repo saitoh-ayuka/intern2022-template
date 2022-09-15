@@ -94,6 +94,16 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
     setIsOpenAlldaySwitch((prev) => !prev);
   };
 
+  const onOpenAndInitPopover = () => {
+    setTytleInput(props.schedule.title);
+    setDateInput(props.schedule.date);
+    setBeforeTimeInput(props.schedule.beforeTime);
+    setAfterTimeInput(props.schedule.afterTime);
+    setIsOpenAlldaySwitch(props.schedule.allday);
+    setMemoInput(props.schedule.memo);
+    setColorName(props.schedule.color);
+  };
+
   const onCloseAndEditEndPopover = () => {
     props.rewriteSchedule(
       {
@@ -117,6 +127,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
   return (
     <Popover
       isOpen={props.isOpenEditPopover}
+      onOpen={onOpenAndInitPopover}
       onClose={props.onCloseEditPopover}
       placement="right"
       closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
