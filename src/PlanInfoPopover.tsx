@@ -39,7 +39,11 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
     event: React.MouseEvent<HTMLDivElement>,
     index: number
   ) => {
+    console.log("before plan number is", props.planNumber);
+
     props.setPlanNumber(index);
+    console.log("after plan number is", props.planNumber);
+
     props.onOpenDetailPopover();
     event.stopPropagation();
   };
