@@ -17,6 +17,7 @@ import { IoIosColorFill } from "react-icons/io";
 
 type Props = {
   setColorName: (value: React.SetStateAction<string>) => void;
+  defaultColor: string;
 };
 
 export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
@@ -43,7 +44,7 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
         <PopoverHeader>予定色の選択</PopoverHeader>
         <RadioGroup
           onChange={(ColorNumber) => props.setColorName(ColorNumber)}
-          defaultValue="green.400"
+          defaultValue={props.defaultColor}
         >
           <HStack>
             <Text> </Text>

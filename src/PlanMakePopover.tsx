@@ -146,6 +146,7 @@ export const PlanMakePopover: React.FC<Props> = (props: Props) => {
               {/* 予定色選択ポップオーバー */}
               <ColorChoicePopover
                 setColorName={setColorName}
+                defaultColor={ColorName}
               ></ColorChoicePopover>
               <PopoverCloseButton />
             </HStack>

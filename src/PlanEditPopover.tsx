@@ -146,6 +146,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
               {/* 予定色選択ポップオーバー */}
               <ColorChoicePopover
                 setColorName={setColorName}
+                defaultColor={ColorName}
               ></ColorChoicePopover>
               <RiSave3Line onClick={onCloseAndEditEndPopover} />
               <GoTrashcan onClick={props.handleChangeDeletePlan} />
