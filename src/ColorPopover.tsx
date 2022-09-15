@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import type React from "react";
+import { useState } from "react";
 import { IoIosColorFill } from "react-icons/io";
 
 type Props = {
@@ -27,10 +28,22 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
     isOpen: isOpenColorChoisePopover,
   } = useDisclosure();
 
+  const [colorValue, setColorValue] = useState("green.400");
+
+  const onCloseAndInitPopover = () => {
+    setColorValue(props.defaultColor);
+    onCloseColorChoisePopover();
+  };
+
+  const handleChange = (ColorName: string) => {
+    setColorValue(ColorName);
+    props.setColorName(ColorName);
+  };
+
   return (
     <Popover
       isOpen={isOpenColorChoisePopover}
-      onClose={onCloseColorChoisePopover}
+      onClose={onCloseAndInitPopover}
       placement="right"
     >
       <PopoverTrigger>
@@ -43,7 +56,8 @@ export const ColorChoicePopover: React.FC<Props> = (props: Props) => {
         <PopoverCloseButton />
         <PopoverHeader>予定色の選択</PopoverHeader>
         <RadioGroup
-          onChange={(ColorNumber) => props.setColorName(ColorNumber)}
+          value={colorValue}
+          onChange={(ColorName) => handleChange(ColorName)}
           defaultValue={props.defaultColor}
         >
           <HStack>
