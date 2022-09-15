@@ -117,7 +117,7 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
   return (
     <Popover
       isOpen={props.isOpenEditPopover}
-      onClose={onCloseAndEditEndPopover}
+      onClose={props.onCloseEditPopover}
       placement="right"
       closeOnBlur={!(TitleInput === "") && !(DateInput === "")}
     >
