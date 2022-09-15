@@ -93,7 +93,13 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
                   </HStack>
                   <HStack>
                     <FaRegCalendarCheck />
-                    <Text>{props.scheduleList[props.planNumber].date}</Text>
+                    <Text>
+                      {props.scheduleList[props.planNumber].date.slice(0, 2) +
+                        "/" +
+                        props.scheduleList[props.planNumber].date.slice(5, 6) +
+                        "/" +
+                        props.scheduleList[props.planNumber].date.slice(8, 9)}
+                    </Text>
                   </HStack>
                   <HStack>
                     <IoMdTime />

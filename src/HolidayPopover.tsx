@@ -86,7 +86,13 @@ export const HolidayPopover: React.FC<Props> = (props: Props) => {
                   </HStack>
                   <HStack>
                     <FaRegCalendarCheck />
-                    <Text>{props.holidayList[planNumber].date}</Text>
+                    <Text>
+                      {props.holidayList[planNumber].date.slice(0, 2) +
+                        "/" +
+                        props.holidayList[planNumber].date.slice(5, 6) +
+                        "/" +
+                        props.holidayList[planNumber].date.slice(8, 9)}
+                    </Text>
                   </HStack>
                   <HStack>
                     <IoMdTime />
