@@ -61,10 +61,9 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const [, setAfterTimeInput] = useState<string | null>("");
   const [planNumber, setPlanNumber] = useState<number>(0);
   const [, setIsOpenAlldaySwitch] = useState<boolean>(false);
-  const [, setColorName] = useState("green.400");
 
   const [willEdit, setWillEdit] = useState<Schedule>(
-    props.scheduleList[planNumber]
+    props.scheduleList[planNumber] ?? ""
   );
 
   const handleChangeInitInput = () => {
