@@ -292,7 +292,7 @@ const App: React.FC = () => {
                     onClick={signIn}
                     size={"large"}
                   >
-                    SignUp
+                    SignIn
                   </Button>
                 </div>
               )}

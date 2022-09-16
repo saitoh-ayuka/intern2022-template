@@ -61,6 +61,7 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
                   key={index}
                   bg={schedule.color}
                   color="white"
+                  overflow="auto"
                   onClick={(event) => handleChangeInitDetail(event, index)}
                 >
                   {schedule.title}
