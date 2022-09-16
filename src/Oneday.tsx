@@ -62,17 +62,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const [planNumber, setPlanNumber] = useState<number>(0);
   const [, setIsOpenAlldaySwitch] = useState<boolean>(false);
 
-  const [willEdit, setWillEdit] = useState<Schedule>({
-    title: "",
-    date: "",
-    beforeTime: null,
-    afterTime: null,
-    memo: null,
-    allday: false,
-    color: "green.400",
-    id: 0,
-  });
-
   const handleChangeInitInput = () => {
     if (!isOpenTitleInputPopover) {
       if (!isOpenDetailPopover && !isOpenEditPopover) {
@@ -107,14 +96,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   };
 
   const onCloseAndEditPlanPopover = () => {
-    console.log("Edit before planNumber is", planNumber);
-    console.log(
-      "Edit before scheduleList[planNumber] is",
-      props.scheduleList[planNumber]
-    );
-    setPlanNumber(planNumber);
-    setWillEdit(props.scheduleList[planNumber]);
-
     onOpenEditPopover();
     onCloseDetailPopover();
   };
@@ -129,13 +110,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     if (!isOpenEditPopover && !isOpenDetailPopover)
       onOpenViewOnlyTitleInputPopover();
   };
-
-  useEffect(() => {
-    if (props.scheduleList[planNumber] != undefined) {
-      setPlanNumber(planNumber);
-      setWillEdit(props.scheduleList[planNumber]);
-    }
-  }, [planNumber, props.scheduleList]);
 
   return (
     <Box
