@@ -62,9 +62,16 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const [planNumber, setPlanNumber] = useState<number>(0);
   const [, setIsOpenAlldaySwitch] = useState<boolean>(false);
 
-  const [willEdit, setWillEdit] = useState<Schedule>(
-    props.scheduleList[planNumber] ?? ""
-  );
+  const [willEdit, setWillEdit] = useState<Schedule>({
+    title: "",
+    date: "",
+    beforeTime: null,
+    afterTime: null,
+    memo: null,
+    allday: false,
+    color: "green.400",
+    id: 0,
+  });
 
   const handleChangeInitInput = () => {
     if (!isOpenTitleInputPopover) {
