@@ -55,7 +55,7 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
         <Box>
           {/* 入力済みの予定を表示 */}
           {props.scheduleList.length >= 1 && (
-            <>
+            <body>
               {props.scheduleList.map((schedule, index) => (
                 <Box
                   key={index}
@@ -67,7 +67,7 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
                   {schedule.title}
                 </Box>
               ))}
-            </>
+            </body>
           )}
         </Box>
       </PopoverTrigger>
