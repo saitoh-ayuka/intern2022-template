@@ -129,6 +129,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   };
 
   useEffect(() => {
+    console.log(props.scheduleList[planNumber]);
     if (props.scheduleList[planNumber] != undefined)
       setWillEdit(props.scheduleList[planNumber]);
   }, [planNumber, props.scheduleList]);
