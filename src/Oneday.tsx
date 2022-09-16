@@ -99,24 +99,20 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const onCloseAndEditPlanPopover = () => {
     console.log("Edit before planNumber is", planNumber);
     console.log(
-      "Edit before scheduleList[planNumber].title is",
-      props.scheduleList[planNumber].title
+      "Edit before scheduleList[planNumber] is",
+      props.scheduleList[planNumber]
     );
 
-    setAll();
+    // setTytleInput(props.scheduleList[planNumber].title);
+    // setDateInput(props.scheduleList[planNumber].date);
+    // setBeforeTimeInput(props.scheduleList[planNumber].beforeTime);
+    // setAfterTimeInput(props.scheduleList[planNumber].afterTime);
+    // setMemoInput(props.scheduleList[planNumber].memo);
+    // setIsOpenAlldaySwitch(props.scheduleList[planNumber].allday);
+    // setColorName(props.scheduleList[planNumber].color);
 
     onOpenEditPopover();
     onCloseDetailPopover();
-  };
-
-  const setAll = () => {
-    setTytleInput(props.scheduleList[planNumber].title);
-    setDateInput(props.scheduleList[planNumber].date);
-    setBeforeTimeInput(props.scheduleList[planNumber].beforeTime);
-    setAfterTimeInput(props.scheduleList[planNumber].afterTime);
-    setMemoInput(props.scheduleList[planNumber].memo);
-    setIsOpenAlldaySwitch(props.scheduleList[planNumber].allday);
-    setColorName(props.scheduleList[planNumber].color);
   };
 
   const onMouseOut = () => {
