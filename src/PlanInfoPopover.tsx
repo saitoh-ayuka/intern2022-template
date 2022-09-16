@@ -21,7 +21,6 @@ import { GoTrashcan } from "react-icons/go";
 import { IoMdTime } from "react-icons/io";
 import { MdTitle } from "react-icons/md";
 import type { Schedule } from "./@types/Schedule";
-import { useEffect } from "react";
 
 type Props = {
   scheduleList: Schedule[];
@@ -40,17 +39,11 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
     event: React.MouseEvent<HTMLDivElement>,
     index: number
   ) => {
-    console.log("before plan number is", props.planNumber);
-
     props.setPlanNumber(index);
 
     props.onOpenDetailPopover();
     event.stopPropagation();
   };
-
-  useEffect(() => {
-    console.log("after plan number is", props.planNumber);
-  }, [props, props.planNumber]);
 
   return (
     <Popover

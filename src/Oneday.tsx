@@ -1,7 +1,7 @@
 import type React from "react";
 import { Box, useDisclosure } from "@chakra-ui/react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ViewDays } from "./ViewDays";
 
 import type { Holidays } from "./App";
@@ -63,6 +63,10 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   const [, setIsOpenAlldaySwitch] = useState<boolean>(false);
   const [, setColorName] = useState("green.400");
 
+  const [willEdit, setWillEdit] = useState<Schedule>(
+    props.scheduleList[planNumber]
+  );
+
   const handleChangeInitInput = () => {
     if (!isOpenTitleInputPopover) {
       if (!isOpenDetailPopover && !isOpenEditPopover) {
@@ -103,14 +107,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       props.scheduleList[planNumber]
     );
 
-    // setTytleInput(props.scheduleList[planNumber].title);
-    // setDateInput(props.scheduleList[planNumber].date);
-    // setBeforeTimeInput(props.scheduleList[planNumber].beforeTime);
-    // setAfterTimeInput(props.scheduleList[planNumber].afterTime);
-    // setMemoInput(props.scheduleList[planNumber].memo);
-    // setIsOpenAlldaySwitch(props.scheduleList[planNumber].allday);
-    // setColorName(props.scheduleList[planNumber].color);
-
     onOpenEditPopover();
     onCloseDetailPopover();
   };
@@ -125,6 +121,10 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     if (!isOpenEditPopover && !isOpenDetailPopover)
       onOpenViewOnlyTitleInputPopover();
   };
+
+  useEffect(() => {
+    setWillEdit(props.scheduleList[planNumber]);
+  }, [planNumber, props.scheduleList]);
 
   return (
     <Box
@@ -168,7 +168,7 @@ export const Oneday: React.FC<Props> = (props: Props) => {
             nowYear={props.nowYear}
             nowMonth={props.nowMonth}
             oneday={props.oneday}
-            schedule={props.scheduleList[planNumber]}
+            schedule={willEdit}
             handleChangeDeletePlan={handleChangeDeletePlan}
             rewriteSchedule={props.rewriteSchedule}
             handleChangeInitInput={handleChangeInitInput}
