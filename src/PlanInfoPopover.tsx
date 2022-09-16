@@ -46,93 +46,103 @@ export const PlanInfoPopover: React.FC<Props> = (props: Props) => {
   };
 
   return (
-    <Popover
-      isOpen={props.isOpenDetailPopover}
-      onClose={props.onCloseDetailPopover}
-      placement="right"
-    >
-      <PopoverTrigger>
-        <Box>
-          {/* 入力済みの予定を表示 */}
-          {props.scheduleList.length >= 1 && (
-            <body>
-              {props.scheduleList.map((schedule, index) => (
-                <Box
-                  key={index}
-                  bg={schedule.color}
-                  color="white"
-                  overflow="auto"
-                  onClick={(event) => handleChangeInitDetail(event, index)}
-                >
-                  {schedule.title}
-                </Box>
-              ))}
-            </body>
-          )}
-        </Box>
-      </PopoverTrigger>
-      <PopoverContent p={5}>
-        <FocusLock returnFocus persistentFocus={false}>
-          <PopoverArrow />
-          <PopoverHeader fontWeight="semibold">
-            <HStack>
-              <Text>予定の詳細</Text>
-              <Spacer />
-              {/* 予定編集ポップオーバー、起動 */}
-              <BiEditAlt onClick={props.onCloseAndEditPlanPopover} />
-              <GoTrashcan onClick={props.handleChangeDeletePlan} />
-              <PopoverCloseButton />
-            </HStack>
-          </PopoverHeader>
-          <VStack spacing={4} align="flex-start">
-            <IconContext.Provider value={{ size: "30px" }}>
-              <Text> </Text>
-              {props.scheduleList.length && (
-                <>
-                  <HStack>
-                    <MdTitle />
-                    <Text>{props.scheduleList[props.planNumber].title}</Text>
-                  </HStack>
-                  <HStack>
-                    <FaRegCalendarCheck />
-                    <Text>
-                      {props.scheduleList[props.planNumber].date.slice(0, 4) +
-                        "/" +
-                        props.scheduleList[props.planNumber].date.slice(5, 7) +
-                        "/" +
-                        props.scheduleList[props.planNumber].date.slice(8, 10)}
-                    </Text>
-                  </HStack>
-                  <HStack>
-                    <IoMdTime />
-                    <Text>
-                      {props.scheduleList[props.planNumber].allday && <>終日</>}
-                      {!props.scheduleList[props.planNumber].allday &&
-                        props.scheduleList[props.planNumber].beforeTime}
-                    </Text>
-                    <Text>
-                      {!props.scheduleList[props.planNumber].allday &&
-                        props.scheduleList[props.planNumber].afterTime && (
-                          <>~</>
+    <body>
+      <Popover
+        isOpen={props.isOpenDetailPopover}
+        onClose={props.onCloseDetailPopover}
+        placement="right"
+      >
+        <PopoverTrigger>
+          <Box>
+            {/* 入力済みの予定を表示 */}
+            {props.scheduleList.length >= 1 && (
+              <>
+                {props.scheduleList.map((schedule, index) => (
+                  <Box
+                    key={index}
+                    bg={schedule.color}
+                    color="white"
+                    overflow="auto"
+                    onClick={(event) => handleChangeInitDetail(event, index)}
+                  >
+                    {schedule.title}
+                  </Box>
+                ))}
+              </>
+            )}
+          </Box>
+        </PopoverTrigger>
+        <PopoverContent p={5}>
+          <FocusLock returnFocus persistentFocus={false}>
+            <PopoverArrow />
+            <PopoverHeader fontWeight="semibold">
+              <HStack>
+                <Text>予定の詳細</Text>
+                <Spacer />
+                {/* 予定編集ポップオーバー、起動 */}
+                <BiEditAlt onClick={props.onCloseAndEditPlanPopover} />
+                <GoTrashcan onClick={props.handleChangeDeletePlan} />
+                <PopoverCloseButton />
+              </HStack>
+            </PopoverHeader>
+            <VStack spacing={4} align="flex-start">
+              <IconContext.Provider value={{ size: "30px" }}>
+                <Text> </Text>
+                {props.scheduleList.length && (
+                  <>
+                    <HStack>
+                      <MdTitle />
+                      <Text>{props.scheduleList[props.planNumber].title}</Text>
+                    </HStack>
+                    <HStack>
+                      <FaRegCalendarCheck />
+                      <Text>
+                        {props.scheduleList[props.planNumber].date.slice(0, 4) +
+                          "/" +
+                          props.scheduleList[props.planNumber].date.slice(
+                            5,
+                            7
+                          ) +
+                          "/" +
+                          props.scheduleList[props.planNumber].date.slice(
+                            8,
+                            10
+                          )}
+                      </Text>
+                    </HStack>
+                    <HStack>
+                      <IoMdTime />
+                      <Text>
+                        {props.scheduleList[props.planNumber].allday && (
+                          <>終日</>
                         )}
-                    </Text>
-                    <Text>
-                      {!props.scheduleList[props.planNumber].allday &&
-                        props.scheduleList[props.planNumber].afterTime}
-                    </Text>
-                  </HStack>
-                  <HStack>
-                    <BsChatText />
-                    <Text width={"230px"} style={{ whiteSpace: "pre-wrap" }}>
-                      {props.scheduleList[props.planNumber].memo}
-                    </Text>
-                  </HStack>
-                </>
-              )}
-            </IconContext.Provider>
-          </VStack>
-        </FocusLock>
-      </PopoverContent>
-    </Popover>
+                        {!props.scheduleList[props.planNumber].allday &&
+                          props.scheduleList[props.planNumber].beforeTime}
+                      </Text>
+                      <Text>
+                        {!props.scheduleList[props.planNumber].allday &&
+                          props.scheduleList[props.planNumber].afterTime && (
+                            <>~</>
+                          )}
+                      </Text>
+                      <Text>
+                        {!props.scheduleList[props.planNumber].allday &&
+                          props.scheduleList[props.planNumber].afterTime}
+                      </Text>
+                    </HStack>
+                    <HStack>
+                      <BsChatText />
+                      <Text width={"230px"} style={{ whiteSpace: "pre-wrap" }}>
+                        {props.scheduleList[props.planNumber].memo}
+                      </Text>
+                    </HStack>
+                  </>
+                )}
+              </IconContext.Provider>
+            </VStack>
+          </FocusLock>
+        </PopoverContent>
+      </Popover>
+    </body>
   );
 };
