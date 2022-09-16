@@ -112,70 +112,72 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   };
 
   return (
-    <Box
-      h="100%"
-      w="100%"
-      onClick={handleChangeInitInput}
-      onMouseOver={onMouseOver}
-      onMouseOut={onMouseOut}
-    >
-      {/* １日〜３１日の表示、今日なら色を分ける */}
-      <ViewDays
-        nowYear={props.nowYear}
-        nowMonth={props.nowMonth}
-        oneday={props.oneday}
-        holidayList={props.holidayList}
-      />
+    <body>
+      <Box
+        h="100%"
+        w="100%"
+        onClick={handleChangeInitInput}
+        onMouseOver={onMouseOver}
+        onMouseOut={onMouseOut}
+      >
+        {/* １日〜３１日の表示、今日なら色を分ける */}
+        <ViewDays
+          nowYear={props.nowYear}
+          nowMonth={props.nowMonth}
+          oneday={props.oneday}
+          holidayList={props.holidayList}
+        />
 
-      {/* 祝日ポップオーバー */}
-      <HolidayPopover
-        holidayList={props.holidayList}
-        onOpenHolidayPopover={onOpenHolidayPopover}
-        onCloseHolidayPopover={onCloseHolidayPopover}
-        isOpenHolidayPopover={isOpenHolidayPopover}
-      />
+        {/* 祝日ポップオーバー */}
+        <HolidayPopover
+          holidayList={props.holidayList}
+          onOpenHolidayPopover={onOpenHolidayPopover}
+          onCloseHolidayPopover={onCloseHolidayPopover}
+          isOpenHolidayPopover={isOpenHolidayPopover}
+        />
 
-      {/* 予定詳細ポップオーバー */}
-      <PlanInfoPopover
-        scheduleList={props.scheduleList}
-        planNumber={planNumber}
-        onCloseAndEditPlanPopover={onCloseAndEditPlanPopover}
-        setPlanNumber={setPlanNumber}
-        handleChangeDeletePlan={handleChangeDeletePlan}
-        onOpenDetailPopover={onOpenDetailPopover}
-        onCloseDetailPopover={onCloseDetailPopover}
-        isOpenDetailPopover={isOpenDetailPopover}
-      />
-      {/* 予定編集ポップオーバー */}
-      {props.scheduleList[planNumber] != undefined && (
-        <>
-          <PlanEditPopover
-            nowYear={props.nowYear}
-            nowMonth={props.nowMonth}
-            oneday={props.oneday}
-            scheduleList={props.scheduleList}
-            planNumber={planNumber}
-            handleChangeDeletePlan={handleChangeDeletePlan}
-            rewriteSchedule={props.rewriteSchedule}
-            handleChangeInitInput={handleChangeInitInput}
-            onCloseTitleInputPopover={onCloseTitleInputPopover}
-            onCloseDetailPopover={onCloseDetailPopover}
-            onCloseEditPopover={onCloseEditPopover}
-            isOpenEditPopover={isOpenEditPopover}
-          />
-        </>
-      )}
+        {/* 予定詳細ポップオーバー */}
+        <PlanInfoPopover
+          scheduleList={props.scheduleList}
+          planNumber={planNumber}
+          onCloseAndEditPlanPopover={onCloseAndEditPlanPopover}
+          setPlanNumber={setPlanNumber}
+          handleChangeDeletePlan={handleChangeDeletePlan}
+          onOpenDetailPopover={onOpenDetailPopover}
+          onCloseDetailPopover={onCloseDetailPopover}
+          isOpenDetailPopover={isOpenDetailPopover}
+        />
+        {/* 予定編集ポップオーバー */}
+        {props.scheduleList[planNumber] != undefined && (
+          <>
+            <PlanEditPopover
+              nowYear={props.nowYear}
+              nowMonth={props.nowMonth}
+              oneday={props.oneday}
+              scheduleList={props.scheduleList}
+              planNumber={planNumber}
+              handleChangeDeletePlan={handleChangeDeletePlan}
+              rewriteSchedule={props.rewriteSchedule}
+              handleChangeInitInput={handleChangeInitInput}
+              onCloseTitleInputPopover={onCloseTitleInputPopover}
+              onCloseDetailPopover={onCloseDetailPopover}
+              onCloseEditPopover={onCloseEditPopover}
+              isOpenEditPopover={isOpenEditPopover}
+            />
+          </>
+        )}
 
-      {/* 予定作成ポップオーバー */}
-      <PlanMakePopover
-        nowMonth={props.nowMonth}
-        nowYear={props.nowYear}
-        oneday={props.oneday}
-        addSchedule={props.addSchedule}
-        isViewOnlyTitleInputPopover={isViewOnlyTitleInputPopover}
-        onCloseTitleInputPopover={onCloseTitleInputPopover}
-        isOpenTitleInputPopover={isOpenTitleInputPopover}
-      />
-    </Box>
+        {/* 予定作成ポップオーバー */}
+        <PlanMakePopover
+          nowMonth={props.nowMonth}
+          nowYear={props.nowYear}
+          oneday={props.oneday}
+          addSchedule={props.addSchedule}
+          isViewOnlyTitleInputPopover={isViewOnlyTitleInputPopover}
+          onCloseTitleInputPopover={onCloseTitleInputPopover}
+          isOpenTitleInputPopover={isOpenTitleInputPopover}
+        />
+      </Box>
+    </body>
   );
 };
