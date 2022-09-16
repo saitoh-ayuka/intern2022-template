@@ -97,9 +97,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   };
 
   const onCloseAndEditPlanPopover = () => {
-    onOpenEditPopover();
-    onCloseDetailPopover();
-
     console.log("Edit before planNumber is", planNumber);
     console.log(
       "Edit before scheduleList[planNumber].title is",
@@ -113,6 +110,9 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     setMemoInput(props.scheduleList[planNumber].memo);
     setIsOpenAlldaySwitch(props.scheduleList[planNumber].allday);
     setColorName(props.scheduleList[planNumber].color);
+
+    onOpenEditPopover();
+    onCloseDetailPopover();
   };
 
   const onMouseOut = () => {
