@@ -1,6 +1,7 @@
 body {
   display: flex;
   place-items: center;
+  flex-flow: column;
   overflow: auto;
 }
 
