@@ -103,6 +103,13 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       props.scheduleList[planNumber].title
     );
 
+    setAll();
+
+    onOpenEditPopover();
+    onCloseDetailPopover();
+  };
+
+  const setAll = () => {
     setTytleInput(props.scheduleList[planNumber].title);
     setDateInput(props.scheduleList[planNumber].date);
     setBeforeTimeInput(props.scheduleList[planNumber].beforeTime);
@@ -110,9 +117,6 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     setMemoInput(props.scheduleList[planNumber].memo);
     setIsOpenAlldaySwitch(props.scheduleList[planNumber].allday);
     setColorName(props.scheduleList[planNumber].color);
-
-    onOpenEditPopover();
-    onCloseDetailPopover();
   };
 
   const onMouseOut = () => {
