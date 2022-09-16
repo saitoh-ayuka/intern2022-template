@@ -101,6 +101,10 @@ export const Oneday: React.FC<Props> = (props: Props) => {
     onCloseDetailPopover();
 
     console.log("Edit before planNumber is", planNumber);
+    console.log(
+      "Edit before scheduleList[planNumber].title is",
+      props.scheduleList[planNumber].title
+    );
 
     setTytleInput(props.scheduleList[planNumber].title);
     setDateInput(props.scheduleList[planNumber].date);
