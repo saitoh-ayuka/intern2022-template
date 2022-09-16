@@ -114,8 +114,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   return (
     <body>
       <Box
-        h="15vw"
-        w="20vw"
+        h="7vw"
+        w="10vw"
         onClick={handleChangeInitInput}
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
