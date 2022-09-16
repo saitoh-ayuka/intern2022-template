@@ -112,6 +112,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
       "Edit before scheduleList[planNumber] is",
       props.scheduleList[planNumber]
     );
+    setPlanNumber(planNumber);
+    setWillEdit(props.scheduleList[planNumber]);
 
     onOpenEditPopover();
     onCloseDetailPopover();
@@ -129,9 +131,10 @@ export const Oneday: React.FC<Props> = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log(props.scheduleList[planNumber]);
-    if (props.scheduleList[planNumber] != undefined)
+    if (props.scheduleList[planNumber] != undefined) {
+      setPlanNumber(planNumber);
       setWillEdit(props.scheduleList[planNumber]);
+    }
   }, [planNumber, props.scheduleList]);
 
   return (
