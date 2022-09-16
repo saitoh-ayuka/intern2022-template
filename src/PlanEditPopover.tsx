@@ -31,7 +31,8 @@ type Props = {
   nowMonth: number;
   oneday: number;
 
-  schedule: Schedule;
+  scheduleList: Schedule[];
+  planNumber: number;
   handleChangeDeletePlan: () => void;
   rewriteSchedule: (newSchedule: Schedule, oldScheduleId: number) => void;
 
@@ -44,21 +45,27 @@ type Props = {
 };
 
 export const PlanEditPopover: React.FC<Props> = (props: Props) => {
-  const [TitleInput, setTytleInput] = useState<string>(props.schedule.title);
-  const [DateInput, setDateInput] = useState<string>(props.schedule.date);
+  const [TitleInput, setTytleInput] = useState<string>(
+    props.scheduleList[props.planNumber].title
+  );
+  const [DateInput, setDateInput] = useState<string>(
+    props.scheduleList[props.planNumber].date
+  );
   const [BeforeTimeInput, setBeforeTimeInput] = useState<string | null>(
-    props.schedule.beforeTime
+    props.scheduleList[props.planNumber].beforeTime
   );
   const [AfterTimeInput, setAfterTimeInput] = useState<string | null>(
-    props.schedule.afterTime
+    props.scheduleList[props.planNumber].afterTime
   );
   const [isOpenAlldaySwitch, setIsOpenAlldaySwitch] = useState<boolean>(
-    props.schedule.allday
+    props.scheduleList[props.planNumber].allday
   );
   const [MemoInput, setMemoInput] = useState<string | null>(
-    props.schedule.memo
+    props.scheduleList[props.planNumber].memo
   );
-  const [ColorName, setColorName] = useState(props.schedule.color);
+  const [ColorName, setColorName] = useState(
+    props.scheduleList[props.planNumber].color
+  );
 
   const handleInputChangeDynamic = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -95,13 +102,13 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
   };
 
   const onCloseAndInitPopover = () => {
-    setTytleInput(props.schedule.title);
-    setDateInput(props.schedule.date);
-    setBeforeTimeInput(props.schedule.beforeTime);
-    setAfterTimeInput(props.schedule.afterTime);
-    setIsOpenAlldaySwitch(props.schedule.allday);
-    setMemoInput(props.schedule.memo);
-    setColorName(props.schedule.color);
+    setTytleInput(props.scheduleList[props.planNumber].title);
+    setDateInput(props.scheduleList[props.planNumber].date);
+    setBeforeTimeInput(props.scheduleList[props.planNumber].beforeTime);
+    setAfterTimeInput(props.scheduleList[props.planNumber].afterTime);
+    setIsOpenAlldaySwitch(props.scheduleList[props.planNumber].allday);
+    setMemoInput(props.scheduleList[props.planNumber].memo);
+    setColorName(props.scheduleList[props.planNumber].color);
 
     props.onCloseEditPopover();
   };
@@ -116,9 +123,9 @@ export const PlanEditPopover: React.FC<Props> = (props: Props) => {
         memo: MemoInput,
         allday: isOpenAlldaySwitch,
         color: ColorName,
-        id: props.schedule.id,
+        id: props.scheduleList[props.planNumber].id,
       },
-      props.schedule.id
+      props.scheduleList[props.planNumber].id
     );
 
     props.handleChangeInitInput();

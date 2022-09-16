@@ -179,7 +179,8 @@ export const Oneday: React.FC<Props> = (props: Props) => {
             nowYear={props.nowYear}
             nowMonth={props.nowMonth}
             oneday={props.oneday}
-            schedule={willEdit}
+            scheduleList={props.scheduleList}
+            planNumber={planNumber}
             handleChangeDeletePlan={handleChangeDeletePlan}
             rewriteSchedule={props.rewriteSchedule}
             handleChangeInitInput={handleChangeInitInput}
